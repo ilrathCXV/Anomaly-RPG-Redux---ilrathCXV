@@ -117,7 +117,7 @@
     </string>
 	<string id="ui_arpg_hint_artefinder">
         <text>Arte-finder - When looting an enemy, you have a chance to find an artefact that is normally found in the current area. Additionaly, any artefact you find will now have higher-than-normal efficiency:\n
-		%c[yellow]$stat% chance to loot an artefact
+		%c[yellow]$stat% chance to loot an artefact\n
 		%c[yellow]$number% minimum found artefact efficiency\n
 		%c[yellow]$boost% maximum found artefact efficiency</text>
     </string>

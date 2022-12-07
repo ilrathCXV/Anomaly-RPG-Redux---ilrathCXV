@@ -672,8 +672,8 @@ function loot_improvement(item)	--actor_on_item_take(item)
 		if IsArtefact(item) or (typeOfArtefact == "i_arty_cont") then
 			local minCondition = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3))
 			local maxCondition = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))
-			if item:condition() < (minCondition/100) then
-				local condArty  = (math.random(minCondition, maxCondition) / 100)
+			if item:condition() < (minCondition * 0.01) then
+				local condArty  = (math.random(minCondition, maxCondition) * 0.01)
 				item:set_condition(condArty)
 			end
 		end
@@ -856,10 +856,8 @@ function der_shooter(npc, shit, bone_id, flags)
 				--npc_position = npc:position()
 			--end
 			
-			--npc:movement_enabled(false)
+			npc:movement_enabled(false)
 			
-			-- [EXPERIMENTAL] Stun Shot based on Arti's Ballistics
-			play_anim(npc)
 			
             sms(2, gt("arpg_disabled"), 5)
         end
@@ -1117,71 +1115,74 @@ function der_npc_cleaner(victim)
             --item:force_unload_magazine(true)
         --end
     --end
+end
 
 ------Мародёрка-1. Спавним больше патронов ----------------> Ammo Eater (additional ammo function)
-    local function more_ammo(victim, item)
-        if victim:alive() then return end
-        if IsAmmo(item) then
-            local bonus = 0.1 * arpg_m.mrdr
-            if (bonus > 0 and ini_sys:section_exist(item:section())) then
-                alife_create_item(item:section(), victim, {ammo = 1 + bonus})
-            end
-        end
-    end
+function more_ammo(victim, item)
+    if victim:alive() then return end
+	if IsAmmo(item) then
+		local bonus = 0.1 * arpg_m.mrdr
+		if (bonus > 0 and ini_sys:section_exist(item:section())) then
+			alife_create_item(item:section(), victim, {ammo = 1 + bonus})
+		end
+	end
+end
 
-    if used_npc[id] then
-        return
-    else
-------Мародёр 1. Количество собираемых патронов -------------> Ammo Eater
-        if arpg_m.mrdr >= 1 then
-            victim:iterate_inventory(more_ammo, victim)
-            CreateTimeEvent(victim:id(), "npc_ammo_aggregation", 0, item_weapon.ammo_aggregation_full, victim:id())
-        end
+local CreateReleaseItem = death_manager.create_release_item
+function death_manager.create_release_item(victim)
+	CreateReleaseItem(victim)
+	------Мародёр 1. Количество собираемых патронов -------------> Ammo Eater
+    if arpg_m.mrdr >= 1 then
+		victim:iterate_inventory(more_ammo, victim)
+		CreateTimeEvent(victim:id(), "npc_ammo_aggregation", 0, item_weapon.ammo_aggregation_full, victim:id())
+	end
 		
 		
 -------------------------------------------------------------> Plate Finder
-		if arpg_m.armor >= 1 then
-			local plateChance = (1 + math.floor(arpg_m.armor / 4)) >= math.random(100)
-			if plateChance then
-				alife_create_item("af_kevlar", victim, {cond = math.random(1,15) * 0.01})
-			end
+	if arpg_m.armor >= 1 then
+		local plateChance = (1 + math.floor(arpg_m.armor / 4)) >= math.random(100)
+		if plateChance then
+			alife_create_item("af_kevlar", victim, {cond = math.random(1,15) * 0.01})
 		end
+	end
 		
 -----------------------------------------------------------> Medicine Man (chance to find meds when looting) Looter 2
-		if arpg_m.mrdr >= skill_req(2) then
-			local looterLevel = arpg_m.mrdr - skill_req(2) + 1
+	if arpg_m.mrdr >= skill_req(2) then
+		local looterLevel = arpg_m.mrdr - skill_req(2) + 1
+		try_spawn_meds(victim, looterLevel)
+		if arpg_m.mrdr >= skill_req(7) then
+			looterLevel = 1
 			try_spawn_meds(victim, looterLevel)
-			if arpg_m.mrdr >= skill_req(7) then
-				looterLevel = 1
-				try_spawn_meds(victim, looterLevel)
-			end
 		end
+	end
 	
 ----Мародёрка-7: шанс на наводку на тайник ------------------> Stash Finder
-        if arpg_m.mrdr >= skill_req(7) then
-            local dice = math.random(100) < 25
-            if dice then
-                treasure_manager.create_random_stash()
-            end
-        end
-		------------------------------------------------------------> Rough Draft for Artefinder to spawn Artefacts (allowed within the area) on killed NPCs (use of drx_da_main_artefacts to get an area's aretfacts)
-		------------------------------------------------------------> Translates to 1% + 0.5% per Looter Level after obtaining this perk
-		if arpg_m.mrdr >= skill_req(3) then
-			local artyChance = 10 + (5 * (arpg_m.mrdr - skill_req(3)))
-			local artyDrop = math.random(1000) <= artyChance
-			if artyDrop then
-				local allowed_artefacts = drx_da_main_artefacts.allowed_artefacts
-				alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim)
-				if arpg_m.mrdr >= skill_req(7) then		------------------------------------------> When final Looter skill is unlocked, an additional roll for an artefact is unlocked (flat 5% chance)
-					artyDrop = math.random(100) <= 1
-					if artyDrop then
-						alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim)
-					end
+	if arpg_m.mrdr >= skill_req(7) then
+		local dice = math.random(100) < 25
+		if dice then
+			treasure_manager.create_random_stash()
+		end
+	end
+------------------------------------------------------------> Rough Draft for Artefinder to spawn Artefacts (allowed within the area) on killed NPCs (use of drx_da_main_artefacts to get an area's aretfacts)
+------------------------------------------------------------> Translates to 1% + 0.5% per Looter Level after obtaining this perk
+	if arpg_m.mrdr >= skill_req(3) then
+		local artyChance = 10 + (5 * (arpg_m.mrdr - skill_req(3)))
+		local artyDrop = math.random(1000) <= artyChance
+		if artyDrop then
+			local allowed_artefacts = drx_da_main_artefacts.allowed_artefacts
+			alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim)
+			if arpg_m.mrdr >= skill_req(7) then		------------------------------------------> When final Looter skill is unlocked, an additional roll for an artefact is unlocked (flat 5% chance)
+				artyDrop = math.random(100) <= 1
+				if artyDrop then
+					local minCondition = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3))
+					local maxCondition = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))
+					local conditionArty = math.random(minCondition, maxCondition)
+					alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim, {cond = conditionArty * 0.01})
 				end
 			end
 		end
-    end
-    used_npc[victim:id()] = true
+	end
+	
 end
 ----------------------------------------------------------------------------------------------
 function actor_on_weapon_before_fire()
