@@ -1,0 +1,57 @@
+function get_config(key)
+    if ui_mcm then return ui_mcm.get("arpg/"..key) else return defaults[key] end
+end
+
+defaults = {
+    ["damage_factor"] = 0.1,
+	["point_modifier"] = 10,
+
+    ["log_battle"] = true,
+    ["log_vamp"] = true,
+    ["log_def"] = true,
+    ["log_heal"] = true,
+    ["log_loot"] = true,
+
+    ["add_bhs"] = "bhs_fixed"
+
+}
+
+function on_mcm_load()
+    op = { id = "arpg",sh = true ,gr =
+        {
+         { id = "title",
+           type = "slide",
+           link = "ui_options_slider_player",
+           text ="ui_mcm_menu_arpg_title",
+           size = {512,50},
+           spacing = 20
+         },
+
+         {id = "damage_factor", type = "track",
+           val = 2, min = 0.05, max = 0.5, step = 0.05, def = 0.1},
+		   
+		 {id = "point_modifier", type = "track",
+           val = 2, min = 10, max = 100, step = 1, def = 10},
+           
+        { id = "title",
+           type = "slide",
+           link = "ui_options_slider_mask",
+           text ="ui_mcm_arpg_logger",
+           size = {512,50},
+           spacing = 20
+         },
+
+         {id = "log_battle", type = "check", val = 1, def = true},
+         {id = "log_vamp", type = "check", val = 1, def = true},
+         {id = "log_def", type = "check", val = 1, def = true},
+         {id = "log_heal", type = "check", val = 1, def = true},
+         
+         {id = "add_bhs", type = "list", val = 0, def = "bhs_disabled",
+         content={ {"bhs_disabled","no_bhs"} , {"bhs_fixed","bhs"}}},
+         
+         
+         
+        }
+    }
+    return op
+end

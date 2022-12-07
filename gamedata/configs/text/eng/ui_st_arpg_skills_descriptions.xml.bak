@@ -1,0 +1,187 @@
+<string_table>
+
+        <!-- Weapon Trees -->
+	<string id="ui_arpg_hint_smg_tree">
+        <text>Small Arms Tree\n
+		Passive - Faster draw/holster speed of weapons from this class: %c[d_green]$stat%</text>
+    </string>
+	<string id="ui_arpg_hint_ar_tree">
+        <text>Assault Rifle Tree\n
+		Passive - Faster draw/holster speed of weapons from this class: %c[d_green]$stat%</text>
+    </string>
+	<string id="ui_arpg_hint_special_tree">
+        <text>Special Weapon Tree\n
+		Passive - Faster draw/holster speed of weapons from this class: %c[d_green]$stat%</text>
+    </string>
+	
+    <string id="ui_arpg_hint_ghost_ammo">
+        <text>Ghost Ammo - Chance to refund ammo on hit with a weapon from this class (double if a critical shot): %c[d_green]$stat% refund chance</text>
+    </string>
+    <string id="ui_arpg_hint_heavy_shot_1">
+        <text>Heavy Shot I - Increases damage with a weapon from this class: %c[d_purple]$stat% damage increase</text>
+    </string>
+    <string id="ui_arpg_hint_disabling_shot">
+        <text>Jamming Shot - Jam an enemy's weapon when shooting them in the arm with a weapon from this class</text>
+    </string>
+    <string id="ui_arpg_hint_headhunter">
+        <text>Headhunter - When landing a critical shot with this weapon class, you gain a small amount of money: %c[d_green]$stat% roubles</text>
+    </string>
+    <string id="ui_arpg_hint_bloody_mess">
+        <text>Bloody Mess - While holding SHIFT, shooting an enemy with a weapon from this class has a chance to cause the target to explode, hurting nearby enemies: %c[d_purple]25% chance</text>
+    </string>
+    <string id="ui_arpg_hint_armor_breaker">
+        <text>Armor Breaker - Multiplies the damage for weapons of this class: %c[d_green]$stat% damage multiplier</text>
+    </string>
+    <string id="ui_arpg_hint_disarming_shot">
+        <text>Disarming Shot - While using a weapon of this class, shooting an enemy's weapon has a chance for them to drop it: %c[d_green]$stat% drop chance</text>
+    </string>
+    <string id="ui_arpg_hint_crippling_shot">
+        <text>Crippling Shot - While using a Rifle Class weapon, shooting an enemy's legs will stagger them for a short time</text>
+    </string>
+	<string id="ui_arpg_hint_heavy_shot_2">
+        <text>Heavy Shot II - Further increases damage with a weapon from this class: %c[d_purple]$stat% damage increase</text>
+    </string>
+	<string id="ui_arpg_hint_heavy_shot_3">
+        <text>Heavy Shot III - Further increases damage with a weapon from this class: %c[d_purple]$stat% damage increase</text>
+    </string>
+	<string id="ui_arpg_hint_bloody_mess_special">
+        <text>Bloodbath - While holding SHIFT, shooting an enemy with a weapon from this class has a chance to cause the target to explode violently, hurting nearby enemies (larger explosion than "Bloody Mess"): %c[d_purple]25% chance to explode</text>
+    </string>
+
+		<!-- Bloody Tech Tree -->
+	<string id="ui_arpg_hint_tech_tree">
+        <text>"Bloody Tech" Tree</text>
+    </string>
+    <string id="ui_arpg_hint_carfeul_handler">
+        <text>Careful Handler - Grants small battery charge to any non-dead devices when killing an enemy: %c[d_green]$stat% charge restored</text>
+    </string>
+    <string id="ui_arpg_hint_helmet_repair">
+        <text>Helmet Kill-Repair - Your equipped helmet is repaired when killing an enemy (amount is boosted by your Survivalist skill-tree level): %c[d_green]$stat% helmet condition restored</text>
+    </string>
+    <string id="ui_arpg_hint_weapon_repair">
+        <text>Weapon Kill-Repair - Your currently-drawn weapon and its parts are repaired when killing an enemy (amount is boosted by the weapon's skill-tree level): %c[d_green]$stat% weapon condition restored</text>
+    </string>
+	<string id="ui_arpg_hint_jam_repair">
+        <text>Jam Specialist - When unjamming a weapon, one of its non-barrel parts will be repaired: %c[d_green]$stat% condition restored to a random part</text>
+    </string>
+    <string id="ui_arpg_hint_armor_repair">
+        <text>Armor Kill-Repair - Your equipped armor is repaired when killing an enemy (amount is boosted by your Armorer skill-tree level): %c[d_green]$stat% armor condition restored</text>
+    </string>
+	<string id="ui_arpg_hint_barrel_cleaner">
+        <text>Fire-forged Armaments - When firing your weapon, you have a 15% chance to restore your barrel's condition: %c[d_green]$stat% barrel condition restored</text>
+    </string>
+	<string id="ui_arpg_hint_good_riddance">
+        <text>Expert Technician - You now have a chance to not spend a use on a repair kit during self-repairs: %c[d_purple]5% chance to not consume repair kit</text>
+    </string>
+	
+	
+	<!-- Survivalist Tree -->
+	<string id="ui_arpg_hint_survival_tree">
+        <text>Survivalist Tree</text>
+    </string>
+	<string id="ui_arpg_hint_second_wind">
+        <text>Second Wind - When your Stamina is under 15%, you will be granted some additional Stamina: %c[d_green]$stat% Stamina on proc</text>
+    </string>
+    <string id="ui_arpg_hint_bullseye">
+        <text>Bullseye - Grants a mulitplier to all damage given: %c[d_purple]5% damage multiplier</text>
+    </string>
+    <string id="ui_arpg_hint_cyber_medic">
+        <text>Cyber-Medic - You now receive passive bleeding recovery: %c[d_green]$stat% bleeding restore</text>
+    </string>
+    <string id="ui_arpg_hint_dodger_surv">
+        <text>Dodger - When hit, you have a %c[d_purple]0.1% chance %c[ui_gray_2]to dodge any damage (chance is increased to %c[d_purple]0.5% %c[ui_gray_2]when taken with Armorer's "Dodger" skill)</text>
+    </string>
+    <string id="ui_arpg_hint_ignorance_surv">
+        <text>Ignorance - Reduce any incoming damage by %c[d_purple]2.5% %c[ui_gray_2](reduction is increased to %c[d_purple]5% %c[ui_gray_2]when taken with Armorer's "Ignorance" skill)</text>
+    </string>
+    <string id="ui_arpg_hint_skilled_doctor">
+        <text>Medical Professional - Certain medical items with lasting effects will last longer: %c[d_green]$stat% duration boost</text>
+    </string>
+    <string id="ui_arpg_hint_comfort_food">
+        <text>Comfort Food - When eating or drinking, you will receive a health bonus equal to their thirst or hunger restore (%c[d_purple]whichever is the highest%c[ui_gray_2])</text>
+    </string>
+	
+	
+    <!-- Looter Tree -->
+	<string id="ui_arpg_hint_looter_tree">
+        <text>Looter Tree</text>
+    </string>
+    <string id="ui_arpg_hint_ammo_eater">
+        <text>Ammo Finder - When looting an enemy, the amount of ammo found on their body is increased: %c[d_green]$stat% extra found ammo</text>
+    </string>
+	<string id="ui_arpg_hint_medicine_man">
+        <text>Medicine Man - When looting an enemy, you have a chance to find a medical item (found-item quality increases with higher chance): %c[d_green]$stat% chance to find a medical item</text>
+    </string>
+	<string id="ui_arpg_hint_artefinder">
+        <text>Arte-finder - When looting an enemy, you have a chance to find an artefact that is normally found in the current area: %c[d_green]$stat% chance to loot an artefact</text>
+    </string>
+	<string id="ui_arpg_hint_weapon_loot">
+        <text>Weapon Loot Condition - When picking up or looting a weapon, it will have better condition (including its parts to a greater extent) if below a certain value: %c[d_green]$stat% min. weapon condition</text>
+    </string>
+    <string id="ui_arpg_hint_outfit_loot">
+        <text>Outfit Loot Condition - When picking up or looting armor or a helmet, it will have better condition if below a certain value: %c[d_green]$stat% min. armor condition</text>
+    </string>
+	<string id="ui_arpg_hint_beggar">
+        <text>Beggar - When looting money, the amount looter will be multiplied: %c[d_green]$stat% looted money multiplier</text>
+    </string>
+	<string id="ui_arpg_hint_master_thief">
+        <text>Master Thief - You now have a small additional chance to find medical items and artefacts when looting enemies. Additionally, any artefact or attachment equipped to the belt slot now slowly recharge over time at a constant rate.\n
+		%c[d_green]$stat% additional medical item chance\n
+		%c[d_green]$statB% additional looted artefact chance\n
+		%c[d_purple]0.01% artefact efficiency recharger per second</text>
+    </string>
+
+    <!-- Armorer Tree -->
+	<string id="ui_arpg_hint_armorer_tree">
+        <text>Armorer Tree</text>
+    </string>
+	<string id="ui_arpg_hint_plate_finder">
+        <text>Plate Finder - When looting an enemy, you have a chance to find a damaged Kevlar Plate: %c[d_green]$stat% plate chance</text>
+    </string>
+	<string id="ui_arpg_hint_traditional_kevlar">
+        <text>Ballistic Weave - Grants damage reduction against bullets: %c[d_green]$stat% bullet resistance</text>
+    </string>
+	<string id="ui_arpg_hint_ignorance_armor">
+        <text>Ignorance - Reduce any incoming damage by %c[d_purple]2.5% %c[ui_gray_2](reduction is increased to %c[d_purple]5% %c[ui_gray_2]when taken with Survivalist's "Ignorance" skill)</text>
+    </string>
+	<string id="ui_arpg_hint_spiked">
+        <text>Spiked - When taking damage, your enemy is hurt by a portion of that damage as well: %c[d_green]$stat% damage reciprocated</text>
+    </string>
+	<string id="ui_arpg_hint_anomalous_materials">
+        <text>Anomalous Materials - Anomalies will deal reduced damage: %c[d_green]$stat% less damage from anomalies</text>
+    </string>
+	<string id="ui_arpg_hint_dodger_armor">
+        <text>Dodger - When hit, you have a %c[d_purple]0.1% chance %c[ui_gray_2]to dodge any damage (chance is increased to %c[d_purple]0.5% %c[ui_gray_2]when taken with Survivalist's "Dodger" skill)</text>
+    </string>
+	<string id="ui_arpg_hint_refreshness">
+        <text>Battle-Hardened - You slowly recover from %c[d_purple]bleeding and dizziness/drunkeness %c[ui_gray_2]passively.</text>
+    </string>
+    
+	<!-- Stalker/Hero Tree -->
+	<string id="ui_arpg_hint_stalker_tree">
+        <text>Stalker Tree</text>
+    </string>
+	<string id="ui_arpg_hint_xmark">
+        <text>X-Mark - %c[d_red] CURRENTLY NON-FUNCTIONAL: GRANTS THE NEXT SKILL AUTOMATICALLY</text>
+    </string>
+	<string id="ui_arpg_hint_recon">
+        <text>Recon - Enemies you kill will now show on the minimap and on your PDA</text>
+    </string>
+	<string id="ui_arpg_hint_rad_reload">
+        <text>Rad-Reload - When reloading your weapon, you reduce your radiation level: %c[d_green]$stat% radiation removal</text>
+    </string>
+	<string id="ui_arpg_hint_runner">
+        <text>Battle Runner - Every step you take grants a small amount of Health: %c[d_green]$stat% Health gained</text>
+    </string>
+	<string id="ui_arpg_hint_vampirism">
+        <text>Vampirism - When killing an enemy, you are granted some Health and Stamina: %c[d_green]$stat% Health and Stamina</text>
+    </string>
+	<string id="ui_arpg_hint_warlock">
+        <text>Warmonger - When killing an enemy, you receive %c[d_purple]a third of your weapon's magazine size %c[ui_gray_2]as ammo to your backpack (%c[d_red]Min. mag size of 3%c[ui_gray_2])</text>
+    </string>
+	<string id="ui_arpg_hint_necromancer">
+        <text>Necro-bane - When dealing damage, you receive %c[d_green]$stat% of it as Health. You also have your %c[d_purple]psy-health completely restored on kill, %c[ui_gray_2]as well as a %c[d_purple]25% damage increase to zombies.</text>
+    </string>
+	
+	
+</string_table>

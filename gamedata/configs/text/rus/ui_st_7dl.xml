@@ -1,0 +1,412 @@
+<string_table>
+    <!-- MCM -->
+    <string id="ui_mcm_menu_arpg">
+        <text>Аномали РПГ</text>
+    </string>
+    <string id="ui_mcm_menu_arpg_title">
+        <text>Настройки Аномали РПГ</text>
+    </string>
+    <string id="ui_mcm_arpg_exp_factor">
+        <text>Множитель опыта</text>
+    </string>
+    <string id="ui_mcm_arpg_exp_factor_desc">
+        <text>Влияет на скорость набора опыта и, как следствие, прокачки</text>
+    </string>
+    <string id="ui_mcm_arpg_ammo_factor">
+        <text>Возврат патронов</text>
+    </string>
+    <string id="ui_mcm_arpg_ammo_factor_desc">
+        <text>С каждым новым уровнем мастерства возрастает возможность не потратить выпущенный патрон. Этот ползунок регулирует прирост шанса с каждым новым уровнем.</text>
+    </string>
+    <string id="ui_mcm_arpg_damage_factor">
+        <text>Бонус к урону (%)</text>
+    </string>
+    <string id="ui_mcm_arpg_damage_factor_desc">
+        <text>Каждый новый уровень урон от оружия увеличивается на заданное значение</text>
+    </string>
+
+    <string id="ui_mcm_arpg_logger">
+        <text>Уведомления</text>
+    </string>
+    <string id="ui_mcm_arpg_log_battle">
+        <text>Журнал боя</text>
+    </string>
+    <string id="ui_mcm_arpg_log_def">
+        <text>Журнал защиты</text>
+    </string>
+
+    <string id="ui_mcm_menu_arpg_title">
+        <text>Настройки хитмарков(требуется перезагрузка)</text>
+    </string>
+    <string id="ui_mcm_arpg_enable">
+        <text>Включить</text>
+    </string>
+    <string id="ui_mcm_arpg_a">
+        <text>Прозрачность</text>
+    </string>
+    <string id="ui_mcm_arpg_r">
+        <text>Красный</text>
+    </string>
+    <string id="ui_mcm_arpg_g">
+        <text>Зелёный</text>
+    </string>
+    <string id="ui_mcm_arpg_b">
+        <text>Синий</text>
+    </string>
+    <string id="ui_mcm_arpg_fade">
+        <text>Время затухания</text>
+    </string>
+
+    <!--потому что нельзя же было сделать унификацию ёпт-->
+    <string id="encyclopedia_mutants_dog">
+        <text>Слепой пёс</text>
+    </string>
+
+    <!-- Лог боя-->
+    <string id="rpg_hit_1">
+        <text>Цель:</text>
+    </string>
+    
+    <string id="rpg_hit_2">
+        <text>Нанесено</text>
+    </string>
+    
+    <string id="rpg_hit_3">
+        <text>урона</text>
+    </string>
+
+    <string id="rpg_hit_4">
+        <text>из</text>
+    </string>
+
+    <string id="rpg_hit_5">
+        <text>бонусного</text>
+    </string>
+    
+    <!-- регистрация попаданий-->
+    <string id="carpg_bones_z">
+        <text>в</text>
+    </string>
+    <string id="carpg_bones_0">
+        <text>хвост</text>
+    </string>
+    <string id="carpg_bones_1">
+        <text>макушку</text>
+    </string>
+    <string id="carpg_bones_2">
+        <text>пах</text>
+    </string>
+    <string id="carpg_bones_3">
+        <text>левое бедро</text>
+    </string>
+    <string id="carpg_bones_4">
+        <text>левую голень</text>
+    </string>
+    <string id="carpg_bones_5">
+        <text>левую пятку</text>
+    </string>
+    <string id="carpg_bones_6">
+        <text>левую стопу</text>
+    </string>
+    <string id="carpg_bones_7">
+        <text>правое бедро</text>
+    </string>
+    <string id="carpg_bones_8">
+        <text>правую голень</text>
+    </string>
+    <string id="carpg_bones_9">
+        <text>правую пятку</text>
+    </string>
+    <string id="carpg_bones_10">
+        <text>правую стопу</text>
+    </string>
+    <string id="carpg_bones_11">
+        <text>живот</text>
+    </string>
+    <string id="carpg_bones_12">
+        <text>грудь</text>
+    </string>
+    <string id="carpg_bones_13">
+        <text>крестец</text>
+    </string>
+    <string id="carpg_bones_14">
+        <text>шею</text>
+    </string>
+    <string id="carpg_bones_15">
+        <text>голову</text>
+    </string>
+    <string id="carpg_bones_16">
+        <text>левый глаз</text>
+    </string>
+    <string id="carpg_bones_17">
+        <text>правый глаз</text>
+    </string>
+    <string id="carpg_bones_18">
+        <text>переносицу</text>
+    </string>
+    <string id="carpg_bones_19">
+        <text>челюсть</text>
+    </string>
+    <string id="carpg_bones_20">
+        <text>левую ключицу</text>
+    </string>
+    <string id="carpg_bones_21">
+        <text>левое плечо</text>
+    </string>
+    <string id="carpg_bones_22">
+        <text>левое предплечье</text>
+    </string>
+    <string id="carpg_bones_23">
+        <text>левое запястье</text>
+    </string>
+    <string id="carpg_bones_24">
+        <text>левый большой палец</text>
+    </string>
+    <string id="carpg_bones_25">
+        <text>левый большой палец</text>
+    </string>
+    <string id="carpg_bones_26">
+        <text>левый большой палец</text>
+    </string>
+    <string id="carpg_bones_27">
+        <text>левый средний палец</text>
+    </string>
+    <string id="carpg_bones_28">
+        <text>левый средний палец</text>
+    </string>
+    <string id="carpg_bones_29">
+        <text>левый средний палец</text>
+    </string>
+    <string id="carpg_bones_30">
+        <text>левый мизинчик</text>
+    </string>
+    <string id="carpg_bones_31">
+        <text>левый мизинчик</text>
+    </string>
+    <string id="carpg_bones_32">
+        <text>левый мизинчик</text>
+    </string>
+    <string id="carpg_bones_33">
+        <text>правую ключицу</text>
+    </string>
+    <string id="carpg_bones_34">
+        <text>правое плечо</text>
+    </string>
+    <string id="carpg_bones_35">
+        <text>правое предплечье</text>
+    </string>
+    <string id="carpg_bones_36">
+        <text>правое запястье</text>
+    </string>
+    <string id="carpg_bones_37">
+        <text>правый большой палец</text>
+    </string>
+    <string id="carpg_bones_38">
+        <text>правый большой палец</text>
+    </string>
+    <string id="carpg_bones_39">
+        <text>правый большой палец</text>
+    </string>
+    <string id="carpg_bones_40">
+        <text>правый средний палец</text>
+    </string>
+    <string id="carpg_bones_41">
+        <text>правый средний палец</text>
+    </string>
+    <string id="carpg_bones_42">
+        <text>правый средний палец</text>
+    </string>
+    <string id="carpg_bones_43">
+        <text>правый мизинчик</text>
+    </string>
+    <string id="carpg_bones_44">
+        <text>правый мизинчик</text>
+    </string>
+    <string id="carpg_bones_45">
+        <text>правый мизинчик</text>
+    </string>
+    <string id="carpg_bones_end">
+        <text>добивающий удар (4)</text>
+    </string>
+
+    <!-- Лог вампиризма-->
+    <string id="rpg_vamp1">
+        <text>Поглощено</text>
+    </string>
+    <string id="rpg_vamp2">
+        <text>единиц здоровья.</text>
+    </string>
+    <string id="rpg_vamp3">
+        <text>Восстановлено</text>
+    </string>
+    <string id="rpg_vamp4">
+        <text>% прочности</text>
+    </string>
+    <string id="rpg_vamp5">
+        <text>(оружия)</text>
+    </string>
+    <string id="rpg_vamp6">
+        <text>(брони)</text>
+    </string>
+    <string id="rpg_vamp7">
+        <text>(шлема)</text>
+    </string>
+    <string id="rpg_vamp8">
+        <text>голова</text>
+    </string>
+    <string id="rpg_vamp9">
+        <text>торс</text>
+    </string>
+    <string id="rpg_vamp10">
+        <text>руки и ноги</text>
+    </string>
+    <string id="rpg_vamp11">
+        <text>% общего самочувствия</text>
+    </string>
+
+    <!--Вывод инфы по бонусам-->
+    <string id="rpg_stat_1">
+        <text>Призрачный выстрел</text>
+    </string>
+    <string id="rpg_stat_2">
+        <text>Тяжёлый выстрел</text>
+    </string>
+    <string id="rpg_stat_21">
+        <text>урона нежити</text>
+    </string>
+    <string id="rpg_stat_3">
+        <text>Взрывной выстрел</text>
+    </string>
+    <string id="rpg_stat_4">
+        <text>Калечащий выстрел</text>
+    </string>
+    <string id="rpg_stat_5">
+        <text>Ломающий выстрел</text>
+    </string>
+    <string id="rpg_stat_6">
+        <text>Престиж: бронебойный выстрел </text>
+    </string>
+    <string id="rpg_stat_62">
+        <text>(20% дополнительного урона по броне)</text>
+    </string>
+    <string id="rpg_stat_7">
+        <text>Престиж: разоружающий выстрел </text>
+    </string>
+    <string id="rpg_stat_72">
+        <text>(выстрелом в правую руку можно выбить оружие)</text>
+    </string>
+
+    <!-- Уведомления в чате-->
+    <string id="rpg_lvl">
+        <text>Уровень</text>
+    </string>
+    <string id="rpg_1">
+        <text>Получено</text>
+    </string>
+    <string id="rpg_2">
+        <text>единиц опыта</text>
+    </string>
+    <string id="rpg_lvlup">
+        <text>Поздравляем! Получен новый уровень! Нажмите SHIFT+C для распределения очков</text>
+    </string>
+
+    <!-- Обработка урона-->
+    <string id="rpg_dmg_0">
+        <text>ожог</text>
+    </string>
+    <string id="rpg_dmg_1">
+        <text>электричество</text>
+    </string>
+    <string id="rpg_dmg_2">
+        <text>хим.ожог</text>
+    </string>
+    <string id="rpg_dmg_3">
+        <text>радиация</text>
+    </string>
+    <string id="rpg_dmg_4">
+        <text>ментальный удар</text>
+    </string>
+    <string id="rpg_dmg_5">
+        <text>разрыв</text>
+    </string>
+    <string id="rpg_dmg_6">
+        <text>пулевое ранение</text>
+    </string>
+    <string id="rpg_dmg_7">
+        <text>взрыв</text>
+    </string>
+    <string id="rpg_dmg_8">
+        <text>неизвестный источник1</text>
+    </string>
+    <string id="rpg_dmg_9">
+        <text>неизвестный источник2</text>
+    </string>
+    <string id="rpg_dmg_10">
+        <text>раскалённый воздух</text>
+    </string>
+    <string id="rpg_dmg_11">
+        <text>неизвестный источник4</text>
+    </string>
+    <string id="rpg_dmg_12">
+        <text>ожог </text>
+    </string>
+
+    <!--отхил и стабилизация-->
+    <string id="rpg_heal1">
+        <text>Выведено</text>
+    </string>
+
+    <string id="rpg_heal2">
+        <text>радиации</text>
+    </string>
+
+    <string id="rpg_heal3">
+        <text>мл. крови</text>
+    </string>
+
+    <!--Лог защиты-->
+    <string id="rpg_def">
+        <text>Защита:</text>
+    </string>
+    <string id="rpg_def0">
+        <text>показатель защиты</text>
+    </string>
+    <string id="rpg_def1">
+        <text>отражено</text>
+    </string>
+    <string id="rpg_def3">
+        <text>успешный уворот!</text>
+    </string>
+
+    <string id="pda_arpg">
+        <text>Опыт: </text>
+    </string>
+    <string id="arpg_isjammed_healing">
+        <text>Оружие заклинило. Чиним</text>
+    </string>
+    <string id="arpg_ghost">
+        <text>Призрачный боеприпас: восстановлено</text>
+    </string>
+    
+    <string id="ui_arpg_reset">
+        <text>Сбросить прогресс? Все очки будут восстановлены</text>
+    </string>
+    <string id="ui_arpg_reset2">
+        <text>Сбросить прогресс</text>
+    </string>
+
+    <string id="arpg_disabled">
+        <text>Цель обездвижена!</text>
+    </string>
+
+    <string id="arpg_jammed">
+        <text>Вражеское оружие повреждено!</text>
+    </string>
+
+    <string id="arpg_disarmed">
+        <text>Цель обезоружена!</text>
+    </string>
+    <string id="arpg_headshot">
+        <text>рублей за гнилуют тыкву!</text>
+    </string>
+</string_table>

@@ -1,0 +1,80 @@
+<w>
+    <!-- ANOMALY RPG -->
+    <!-- UI -->
+    <file name="ui\ui_arpg_main">
+        <texture id="arpg_frame_up_l"     x="0"   y="0"   width="167" height="312"/>
+        <texture id="arpg_frame_up_r"     x="167" y="0"   width="167" height="312"/>
+        <texture id="arpg_frame_down_l"   x="0"   y="315" width="167" height="312"/>
+        <texture id="arpg_frame_down_r"   x="167" y="315" width="167" height="312"/>
+        
+        <texture id="arpg_skill_smg"      x="340" y="0"   width="138" height="42" />
+        <texture id="arpg_skill_rifle"    x="340" y="47"  width="138" height="42" />
+        <texture id="arpg_skill_sgun"     x="340" y="94"  width="138" height="42" />
+        <texture id="arpg_skill_tech"     x="340" y="141" width="138" height="42" />
+        <texture id="arpg_skill_surv"     x="340" y="188" width="138" height="42" />
+        <texture id="arpg_skill_armor"    x="340" y="240" width="138" height="42" />
+        <texture id="arpg_skill_mrdr"   x="340" y="287" width="138" height="42" />
+        <texture id="arpg_skill_stlk"  x="340" y="334" width="138" height="42" />
+        
+        <texture id="arpg_gun1"   x="500" y="0"   width="136" height="37" />
+        <texture id="arpg_gun2"   x="500" y="42"  width="136" height="37" />
+        <texture id="arpg_gun3"   x="500" y="84"  width="136" height="37" />
+        <texture id="arpg_gun4"   x="500" y="126" width="136" height="37" />
+        <texture id="arpg_gun5"   x="500" y="168" width="136" height="37" />
+        <texture id="arpg_gun6"   x="500" y="210" width="136" height="37" />
+        <texture id="arpg_gun7"   x="500" y="252" width="136" height="37" />
+        <texture id="arpg_gun8"   x="340" y="559" width="136" height="37" />
+        
+        <texture id="arpg_tech1"   x="650" y="0"   width="136" height="37" />
+        <texture id="arpg_tech2"   x="650" y="42"  width="136" height="37" />
+        <texture id="arpg_tech3"   x="650" y="84"  width="136" height="37" />
+        <texture id="arpg_tech4"   x="650" y="126" width="136" height="37" />
+        <texture id="arpg_tech5"   x="650" y="168" width="136" height="37" />
+        <texture id="arpg_tech6"   x="650" y="210" width="136" height="37" />
+        <texture id="arpg_tech7"   x="650" y="252" width="136" height="37" />
+        
+        <texture id="arpg_surv1"   x="500" y="338" width="136" height="37" />
+        <texture id="arpg_surv2"   x="500" y="380" width="136" height="37" />
+        <texture id="arpg_surv3"   x="500" y="422" width="136" height="37" />
+        <texture id="arpg_surv4"   x="500" y="464" width="136" height="37" />
+        <texture id="arpg_surv5"   x="500" y="506" width="136" height="37" />
+        <texture id="arpg_surv6"   x="500" y="548" width="136" height="37" />
+        <texture id="arpg_surv7"   x="500" y="590" width="136" height="37" />
+        
+        <texture id="arpg_lut1"   x="650" y="338" width="136" height="37" />
+        <texture id="arpg_lut2"   x="650" y="380" width="136" height="37" />
+        <texture id="arpg_lut3"   x="650" y="422" width="136" height="37" />
+        <texture id="arpg_lut4"   x="650" y="464" width="136" height="37" />
+        <texture id="arpg_lut5"   x="650" y="506" width="136" height="37" />
+        <texture id="arpg_lut6"   x="650" y="548" width="136" height="37" />
+        <texture id="arpg_lut7"   x="650" y="590" width="136" height="37" />
+        
+        <texture id="arpg_armor1"   x="800" y="338" width="136" height="37" />
+        <texture id="arpg_armor2"   x="800" y="380" width="136" height="37" />
+        <texture id="arpg_armor3"   x="500" y="506" width="136" height="37" />
+        <texture id="arpg_armor4"   x="800" y="422" width="136" height="37" />
+        <texture id="arpg_armor5"   x="800" y="464" width="136" height="37" />
+        <texture id="arpg_armor6"   x="800" y="506" width="136" height="37" />
+        <texture id="arpg_armor7"   x="800" y="548" width="136" height="37" />
+        
+        <texture id="arpg_stlk1"   x="800" y="0"   width="136" height="37" />
+        <texture id="arpg_stlk2"   x="800" y="42"  width="136" height="37" />
+        <texture id="arpg_stlk3"   x="800" y="84"  width="136" height="37" />
+        <texture id="arpg_stlk4"   x="800" y="126" width="136" height="37" />
+        <texture id="arpg_stlk5"   x="800" y="168" width="136" height="37" />
+        <texture id="arpg_stlk6"   x="800" y="210" width="136" height="37" />
+        <texture id="arpg_stlk7"   x="800" y="252" width="136" height="37" />
+
+        <texture id="arpg_no_lu"  x="500" y="296" width="136" height="37" />
+        <texture id="arpg_no_ru"  x="650" y="296" width="136" height="37" />
+        <texture id="arpg_no_ld"  x="800" y="296" width="136" height="37" />
+        <texture id="arpg_no_rd"  x="800" y="590" width="136" height="37" />
+        
+        <texture id="arpg_activator_d"    x="346" y="380" width="33" height="39" />
+        <texture id="arpg_activator_h"    x="346" y="422" width="33" height="39" />
+        <texture id="arpg_activator_e"    x="346" y="464" width="33" height="39" />
+        <texture id="arpg_activator_t"    x="346" y="506" width="33" height="39" />
+        
+        <texture id="arpg_pts_counter"    x="425" y="400" width="34" height="40" />
+    </file>
+</w>

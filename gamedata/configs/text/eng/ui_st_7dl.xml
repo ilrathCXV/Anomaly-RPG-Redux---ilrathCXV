@@ -1,0 +1,439 @@
+<string_table>
+
+        <!-- MCM -->
+    <string id="ui_mcm_menu_arpg">
+        <text>Anomaly RPG</text>
+    </string>
+    <string id="ui_mcm_menu_arpg_title">
+        <text>Anomaly RPG Settings</text>
+    </string>
+    <string id="ui_mcm_arpg_exp_factor">
+        <text>Exp multiplier</text>
+    </string>
+    <string id="ui_mcm_arpg_exp_factor_desc">
+        <text>Depends on this option you will get more or less exp points</text>
+    </string>
+    <string id="ui_mcm_arpg_ammo_factor">
+        <text>Ammo retrieve chance</text>
+    </string>
+    <string id="ui_mcm_arpg_ammo_factor_desc">
+        <text>With every new mastery level you'll get a chence to not spent your ammo. This option increasing chances</text>
+    </string>
+    <string id="ui_mcm_arpg_damage_factor">
+        <text>Damage bonus (%)</text>
+    </string>
+    <string id="ui_mcm_arpg_damage_factor_desc">
+        <text>Every new level damage dealt increasing for certain amount</text>
+    </string>
+	
+	<string id="ui_mcm_arpg_point_modifier">
+        <text>Rank-to-Perk-Point Modifier </text>
+    </string>
+    <string id="ui_mcm_arpg_point_modifier_desc">
+        <text>Modifier tha influences how many rank points are needed to unlock a perk point. A higher value equals an exponentially higher rank point requirement per level.\nEquation for referece:\nmath.floor[(RPG Level * Point Modifier) ^ 1.4)]</text>
+    </string>
+
+    <string id="ui_mcm_arpg_logger">
+        <text>PDA MESSAGE LOG</text>
+    </string>
+    <string id="ui_mcm_arpg_log_battle">
+        <text>Battle log</text>
+    </string>
+	<string id="ui_mcm_arpg_log_vamp">
+        <text>Life-steal log</text>
+    </string>
+	<string id="ui_mcm_arpg_log_def">
+        <text>Defense log</text>
+    </string>
+	<string id="ui_mcm_arpg_log_heal">
+        <text>Healing log</text>
+    </string>
+    
+    <string id="ui_mcm_menu_arpg_title">
+        <text>Fine-tuning (RELOAD REQUIRED)</text>
+    </string>
+	<string id="ui_mcm_arpg_add_bhs">
+        <text>Add BHS Body Parts to logs</text>
+    </string>
+	<string id="ui_mcm_lst_bhs">
+        <text>Has BHS</text>
+    </string>
+	<string id="ui_mcm_lst_no_bhs">
+        <text>Does not have BHS</text>
+    </string>
+	
+	
+    <string id="ui_mcm_arpg_enable">
+        <text>Enable hitmark</text>
+    </string>
+    <string id="ui_mcm_arpg_a">
+        <text>Hitmark's alpha</text>
+    </string>
+    <string id="ui_mcm_arpg_r">
+        <text>Hitmark's red</text>
+    </string>
+    <string id="ui_mcm_arpg_g">
+        <text>Hitmark's green</text>
+    </string>
+    <string id="ui_mcm_arpg_b">
+        <text>Hitmark's blue</text>
+    </string>
+    <string id="ui_mcm_arpg_fade">
+        <text>Fade time</text>
+    </string>
+    
+    
+    <!--потому что нельзя же было сделать унификацию ёпт-->
+    <string id="encyclopedia_mutants_dog">
+        <text>Blind dog</text>
+    </string>
+
+    <!-- Лог боя-->
+    <string id="rpg_hit_1">
+        <text>Target:</text>
+    </string>
+    
+    <string id="rpg_hit_2">
+        <text>Dealt</text>
+    </string>
+    
+    <string id="rpg_hit_3">
+        <text>damage</text>
+    </string>
+
+    <string id="rpg_hit_4">
+        <text>from</text>
+    </string>
+
+    <string id="rpg_hit_5">
+        <text>bonus</text>
+    </string>
+
+    <!-- регистрация попаданий-->
+    <string id="carpg_bones_z">
+        <text>to the</text>
+    </string>
+    <string id="carpg_bones_0">
+        <text>tail</text>
+    </string>
+    <string id="carpg_bones_1">
+        <text>temple</text>
+    </string>
+    <string id="carpg_bones_2">
+        <text>stomach</text>
+    </string>
+    <string id="carpg_bones_3">
+        <text>left hip</text>
+    </string>
+    <string id="carpg_bones_4">
+        <text>left shin</text>
+    </string>
+    <string id="carpg_bones_5">
+        <text>left heel</text>
+    </string>
+    <string id="carpg_bones_6">
+        <text>left feet</text>
+    </string>
+    <string id="carpg_bones_7">
+        <text>right hip</text>
+    </string>
+    <string id="carpg_bones_8">
+        <text>right shin</text>
+    </string>
+    <string id="carpg_bones_9">
+        <text>right heel</text>
+    </string>
+    <string id="carpg_bones_10">
+        <text>right feet</text>
+    </string>
+    <string id="carpg_bones_11">
+        <text>belly</text>
+    </string>
+    <string id="carpg_bones_12">
+        <text>chest</text>
+    </string>
+    <string id="carpg_bones_13">
+        <text>sacrum</text>
+    </string>
+    <string id="carpg_bones_14">
+        <text>neck</text>
+    </string>
+    <string id="carpg_bones_15">
+        <text>head</text>
+    </string>
+    <string id="carpg_bones_16">
+        <text>left eye</text>
+    </string>
+    <string id="carpg_bones_17">
+        <text>right eye</text>
+    </string>
+    <string id="carpg_bones_18">
+        <text>eyelid</text>
+    </string>
+    <string id="carpg_bones_19">
+        <text>jaw</text>
+    </string>
+    <string id="carpg_bones_20">
+        <text>left collarbone</text>
+    </string>
+    <string id="carpg_bones_21">
+        <text>left shoulder</text>
+    </string>
+    <string id="carpg_bones_22">
+        <text>left arm</text>
+    </string>
+    <string id="carpg_bones_23">
+        <text>left wrist</text>
+    </string>
+    <string id="carpg_bones_24">
+        <text>left hand</text>
+    </string>
+    <string id="carpg_bones_25">
+        <text>left hand</text>
+    </string>
+    <string id="carpg_bones_26">
+        <text>left hand</text>
+    </string>
+    <string id="carpg_bones_27">
+        <text>left palm</text>
+    </string>
+    <string id="carpg_bones_28">
+        <text>left palm</text>
+    </string>
+    <string id="carpg_bones_29">
+        <text>left palm</text>
+    </string>
+    <string id="carpg_bones_30">
+        <text>left palm</text>
+    </string>
+    <string id="carpg_bones_31">
+        <text>left palm</text>
+    </string>
+    <string id="carpg_bones_32">
+        <text>left palm</text>
+    </string>
+    <string id="carpg_bones_33">
+        <text>right collarbone</text>
+    </string>
+    <string id="carpg_bones_34">
+        <text>right shoulder</text>
+    </string>
+    <string id="carpg_bones_35">
+        <text>right arm</text>
+    </string>
+    <string id="carpg_bones_36">
+        <text>right wrist</text>
+    </string>
+    <string id="carpg_bones_37">
+        <text>right hand</text>
+    </string>
+    <string id="carpg_bones_38">
+        <text>right hand</text>
+    </string>
+    <string id="carpg_bones_39">
+        <text>right hand</text>
+    </string>
+    <string id="carpg_bones_40">
+        <text>right palm</text>
+    </string>
+    <string id="carpg_bones_41">
+        <text>right palm</text>
+    </string>
+    <string id="carpg_bones_42">
+        <text>right palm</text>
+    </string>
+    <string id="carpg_bones_43">
+        <text>right palm</text>
+    </string>
+    <string id="carpg_bones_44">
+        <text>right palm</text>
+    </string>
+    <string id="carpg_bones_45">
+        <text>right palm</text>
+    </string>
+    <string id="carpg_bones_end">
+        <text>finishing strike (4)</text>
+    </string>
+
+    <!-- Лог вампиризма-->
+    <string id="rpg_vamp1">
+        <text>Absorbed</text>
+    </string>
+    <string id="rpg_vamp2">
+        <text>hit points.</text>
+    </string>
+    <string id="rpg_vamp3">
+        <text>Restored</text>
+    </string>
+    <string id="rpg_vamp4">
+        <text>% capacity</text>
+    </string>
+    <string id="rpg_vamp5">
+        <text>(weapon)</text>
+    </string>
+    <string id="rpg_vamp6">
+        <text>(armor)</text>
+    </string>
+    <string id="rpg_vamp7">
+        <text>(helmet)</text>
+    </string>
+    <string id="rpg_vamp8">
+        <text>head</text>
+    </string>
+    <string id="rpg_vamp9">
+        <text>torso</text>
+    </string>
+    <string id="rpg_vamp10">
+        <text>limbs</text>
+    </string>
+    <string id="rpg_vamp11">
+        <text>% entire health</text>
+    </string>
+
+    <!--Вывод инфы по бонусам-->
+    <string id="rpg_stat_1">
+        <text>Ghost shot</text>
+    </string>
+    <string id="rpg_stat_2">
+        <text>Heavy shot</text>
+    </string>
+    <string id="rpg_stat_21">
+        <text>against undead</text>
+    </string>
+    <string id="rpg_stat_3">
+        <text>Explosive shot</text>
+    </string>
+    <string id="rpg_stat_4">
+        <text>Crippling shot</text>
+    </string>
+    <string id="rpg_stat_5">
+        <text>Disabling shot</text>
+    </string>
+    <string id="rpg_stat_6">
+        <text>Prestige: armor-piercing shot </text>
+    </string>
+    <string id="rpg_stat_62">
+        <text>(20% additional damage on armor)</text>
+    </string>
+    <string id="rpg_stat_7">
+        <text>Prestige: unarming shot </text>
+    </string>
+    <string id="rpg_stat_72">
+        <text>(ability to disarm target with a hit to the right hand)</text>
+    </string>
+    
+    <!-- Уведомления в чате-->
+    <string id="rpg_lvl">
+        <text>Level</text>
+    </string>
+	<string id="rpg_lvlUpNew">
+        <text>Level Up</text>
+    </string>
+    <string id="rpg_1">
+        <text>Gained</text>
+    </string>
+    <string id="rpg_2">
+        <text>exp pts</text>
+    </string>
+    <string id="rpg_lvlup">
+        <text>Grats! New level achieved! Press SHIFT+C to distribute points</text>
+    </string>
+
+    <string id="rpg_dmg_0">
+        <text>burn</text>
+    </string>
+    <string id="rpg_dmg_1">
+        <text>shock</text>
+    </string>
+    <string id="rpg_dmg_2">
+        <text>toxic</text>
+    </string>
+    <string id="rpg_dmg_3">
+        <text>radiation</text>
+    </string>
+    <string id="rpg_dmg_4">
+        <text>telepathic</text>
+    </string>
+    <string id="rpg_dmg_5">
+        <text>wound</text>
+    </string>
+    <string id="rpg_dmg_6">
+        <text>bullet hit</text>
+    </string>
+    <string id="rpg_dmg_7">
+        <text>explode</text>
+    </string>
+    <string id="rpg_dmg_8">
+        <text>unknown source</text>
+    </string>
+    <string id="rpg_dmg_9">
+        <text>misterious danger</text>
+    </string>
+    <string id="rpg_dmg_10">
+        <text>overheated air</text>
+    </string>
+    <string id="rpg_dmg_11">
+        <text>invisible foe</text>
+    </string>
+    <string id="rpg_dmg_12">
+        <text>warmth </text>
+    </string>
+
+    <!--отхил и стабилизация-->
+    <string id="rpg_heal1">
+        <text>Withdraw</text>
+    </string>
+    <string id="rpg_heal2">
+        <text>radiations</text>
+    </string>
+    <string id="rpg_heal3">
+        <text>ml. of bloodloss</text>
+    </string>
+
+        <!--Лог защиты-->
+    <string id="rpg_def">
+        <text>Defence:</text>
+    </string>
+    <string id="rpg_def0">
+        <text>armor rate</text>
+    </string>
+    <string id="rpg_def1">
+        <text>reflected</text>
+    </string>
+    <string id="rpg_def3">
+        <text>dodge success!</text>
+    </string>
+
+
+    <string id="pda_arpg">
+        <text>Experience: </text>
+    </string>
+    <string id="arpg_isjammed_healing">
+        <text>Gun is jammed. Healing</text>
+    </string>
+    <string id="arpg_ghost">
+        <text>Ghost ammo: Success!</text>
+    </string>
+    
+    <string id="ui_arpg_reset">
+        <text>Do you want to reset? You will get all points back</text>
+    </string>
+    <string id="ui_arpg_reset2">
+        <text>Reset</text>
+    </string>
+    <string id="arpg_disabled">
+        <text>Target stunned!</text>
+    </string>
+
+    <string id="arpg_jammed">
+        <text>Enemy's weapon is jammed!</text>
+    </string>
+
+    <string id="arpg_disarmed">
+        <text>Target disarmed!</text>
+    </string>
+    
+    <string id="arpg_headshot">
+        <text>extra cash for rotten pumpkin!</text>
+    </string>
+</string_table>

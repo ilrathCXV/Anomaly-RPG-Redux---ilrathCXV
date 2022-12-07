@@ -1,0 +1,146 @@
+<w>
+    <arpg_selector x="0" y="0" width="750" height="768">
+        <title_arpg x="40" y="16" width="500" height="32">
+            <text complex_mode="1" align="с" vert_align="l" font="graffiti32" color="ui_3"/>
+        </title_arpg>
+        <lvl_counter x="550" y="18" width="400" height="32">
+            <text complex_mode="1" align="с" vert_align="c" font="graffiti32" color="ui_3"/>
+        </lvl_counter>
+
+        <!--Мастерство малого калибра-->
+        <smg_window x="74" y="357" width="145" height="42"/>
+        <smg_frame x="50" y="90" width="167" height="312"/>
+        <smg_cost x="60" y="356" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </smg_cost>
+        <smg_bonus7    x="81"  y="94"  width="136"  height="37" stretch="1" />
+        <smg_bonus6    x="81"  y="131" width="136"  height="37" stretch="1" />
+        <smg_bonus5    x="81"  y="168"  width="136"  height="37" stretch="1" />
+        <smg_bonus4    x="81"  y="205"  width="136"  height="37" stretch="1" />
+        <smg_bonus3    x="81"  y="242"  width="136"  height="37" stretch="1" />
+        <smg_bonus2    x="81"  y="279"  width="136"  height="37" stretch="1" />
+        <smg_bonus1    x="81"  y="316"  width="136"  height="37" stretch="1" />
+        <smg_activator x="53"  y="343"  width="33"   height="38"/>
+
+        <!--Мастерство среднего и крупного калибра-->
+        <rifle_window x="247" y="357" width="137" height="42" stretch="1" />
+        <rifle_frame x="220" y="90" width="167" height="312" stretch="1" />
+        <rifle_cost x="230" y="354" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </rifle_cost>
+        <rifle_bonus7    x="251" y="94"  width="136"  height="37" stretch="1" />
+        <rifle_bonus6    x="251" y="131" width="136"  height="37" stretch="1" />
+        <rifle_bonus5    x="251" y="168"  width="136"  height="37" stretch="1" />
+        <rifle_bonus4    x="251" y="205"  width="136"  height="37" stretch="1" />
+        <rifle_bonus3    x="251" y="242"  width="136"  height="37" stretch="1" />
+        <rifle_bonus2    x="251" y="279"  width="136"  height="37" stretch="1" />
+        <rifle_bonus1    x="251" y="316"  width="136"  height="37" stretch="1" />
+        <rifle_activator x="223" y="343"  width="33"   height="38" />
+
+        <!--Мастерство дробовика-->
+        <sgun_window x="417" y="357" width="137" height="42" stretch="1" />
+        <sgun_frame x="390" y="90" width="167" height="312" stretch="1" />
+        <sgun_cost x="400" y="354" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </sgun_cost>
+        <sgun_bonus7    x="421" y="94"  width="136"  height="37" stretch="1" />
+        <sgun_bonus6    x="421" y="131" width="136"  height="37" stretch="1" />
+        <sgun_bonus5    x="421" y="168"  width="136"  height="37" stretch="1" />
+        <sgun_bonus4    x="421" y="205"  width="136"  height="37" stretch="1" />
+        <sgun_bonus3    x="421" y="242"  width="136"  height="37" stretch="1" />
+        <sgun_bonus2    x="421" y="279"  width="136"  height="37" stretch="1" />
+        <sgun_bonus1    x="421" y="316"  width="136"  height="37" stretch="1" />
+        <sgun_activator x="393" y="343"  width="33"   height="38" />
+
+        <!--Мастерство механика-->
+        <tech_window x="561" y="357" width="137" height="42" stretch="1" />
+        <tech_frame x="560" y="90" width="167" height="312" stretch="1" />
+        <tech_cost x="697" y="354" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </tech_cost>
+        <tech_bonus7    x="560" y="94"  width="136"  height="37" stretch="1" />
+        <tech_bonus6    x="560" y="131" width="136"  height="37" stretch="1" />
+        <tech_bonus5    x="560" y="168"  width="136"  height="37" stretch="1" />
+        <tech_bonus4    x="560" y="205"  width="136"  height="37" stretch="1" />
+        <tech_bonus3    x="560" y="242"  width="136"  height="37" stretch="1" />
+        <tech_bonus2    x="560" y="279"  width="136"  height="37" stretch="1" />
+        <tech_bonus1    x="560" y="316"  width="136"  height="37" stretch="1" />
+        <tech_activator x="690"  y="343"  width="33"   height="38" />
+
+        <!--Мастерство выживальщика-->
+        <surv_window x="77" y="412" width="137" height="42" stretch="1" />
+        <surv_frame x="50" y="410" width="167" height="312" stretch="1" />
+        <surv_cost x="60" y="442" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </surv_cost>
+        <surv_bonus1    x="81"  y="458"  width="136"  height="37" stretch="1" />
+        <surv_bonus2    x="81"  y="495"  width="136"  height="37" stretch="1" />
+        <surv_bonus3    x="81"  y="532"  width="136"  height="37" stretch="1" />
+        <surv_bonus4    x="81"  y="569"  width="136"  height="37" stretch="1" />
+        <surv_bonus5    x="81"  y="606"  width="136"  height="37" stretch="1" />
+        <surv_bonus6    x="81"  y="643"  width="136"  height="37" stretch="1" />
+        <surv_bonus7    x="81"  y="680"  width="136"  height="37" stretch="1" />
+        <surv_activator x="53"  y="430"  width="33"   height="38" />
+
+        <!--Мастерство мародёра-->
+        <mrdr_window x="247" y="412" width="137" height="42" stretch="1" />
+        <mrdr_frame x="220" y="410" width="167" height="312" stretch="1" />
+        <mrdr_cost x="230" y="442" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </mrdr_cost>
+        <mrdr_bonus1    x="251"  y="458"  width="136"  height="37" stretch="1" />
+        <mrdr_bonus2    x="251"  y="495"  width="136"  height="37" stretch="1" />
+        <mrdr_bonus3    x="251"  y="532"  width="136"  height="37" stretch="1" />
+        <mrdr_bonus4    x="251"  y="569"  width="136"  height="37" stretch="1" />
+        <mrdr_bonus5    x="251"  y="606"  width="136"  height="37" stretch="1" />
+        <mrdr_bonus6    x="251"  y="643"  width="136"  height="37" stretch="1" />
+        <mrdr_bonus7    x="251"  y="680"  width="136"  height="37" stretch="1" />
+        <mrdr_activator x="223"  y="430"  width="33"   height="38" />
+
+        <!--Мастерство броненосца-->
+        <armor_window x="417" y="412" width="137" height="42" stretch="1" />
+        <armor_frame x="390" y="410" width="167" height="312" stretch="1" />
+        <armor_cost x="400" y="442" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </armor_cost>
+        <armor_bonus1    x="421"  y="458"  width="136"  height="37" stretch="1" />
+        <armor_bonus2    x="421"  y="495"  width="136"  height="37" stretch="1" />
+        <armor_bonus3    x="421"  y="532"  width="136"  height="37" stretch="1" />
+        <armor_bonus4    x="421"  y="569"  width="136"  height="37" stretch="1" />
+        <armor_bonus5    x="421"  y="606"  width="136"  height="37" stretch="1" />
+        <armor_bonus6    x="421"  y="643"  width="136"  height="37" stretch="1" />
+        <armor_bonus7    x="421"  y="680"  width="136"  height="37" stretch="1" />
+        <armor_activator x="393"  y="430"  width="33"   height="38" />
+        
+        <!--Мастерство сталкера-->
+        <stlk_window x="561" y="412" width="137" height="42" stretch="1" />
+        <stlk_frame x="560" y="410" width="167" height="312" stretch="1" />
+        <stlk_cost x="697" y="442" width="20" height="15">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </stlk_cost>
+        <stlk_bonus1    x="560"  y="458"  width="136"  height="37" stretch="1" />
+        <stlk_bonus2    x="560"  y="495"  width="136"  height="37" stretch="1" />
+        <stlk_bonus3    x="560"  y="532"  width="136"  height="37" stretch="1" />
+        <stlk_bonus4    x="560"  y="569"  width="136"  height="37" stretch="1" />
+        <stlk_bonus5    x="560"  y="606"  width="136"  height="37" stretch="1" />
+        <stlk_bonus6    x="560"  y="643"  width="136"  height="37" stretch="1" />
+        <stlk_bonus7    x="560"  y="680"  width="136"  height="37" stretch="1" />
+        <stlk_activator x="690"  y="430"  width="33"   height="38" />
+        
+        <perk_reset x="850" y="730" width="136" height="25">
+            <text font="letterica16">ui_arpg_reset2</text>
+            <texture>ui_button_ordinary</texture>
+        </perk_reset>
+        
+        <!--Счётчик свободных очей-->
+        <stlk_pts_bg    x="745"  y="10"  width="51"  height="59" stretch="1">
+        </stlk_pts_bg>
+        <stlk_pts_count x="753"  y="20"  width="34"  height="39" stretch="1">
+            <text complex_mode="1" align="c" vert_align="c" font="graffiti32"/>
+        </stlk_pts_count>
+    </arpg_selector>
+    <arpg_selector2 x="0" y="0" width="750" height="768">
+    </arpg_selector2>
+    
+</w>
+

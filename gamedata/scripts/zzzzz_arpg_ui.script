@@ -1,0 +1,2056 @@
+----------------------------------------------------------------------------------------------
+-----------------------------------ИНИЦИАЛИЗАЦИЯ----------------------------------------------
+----------------------------------------------------------------------------------------------
+local ts                    = tostring
+local tn                    = tonumber
+local gt                    = game.translate_string
+local sms                   = actor_menu.set_msg
+local updated               = 0
+local interval              = 5000
+local menu_key              = DIK_keys.DIK_C
+local menu_key2              = DIK_keys.DIK_X
+local K_SHFT                = DIK_keys.DIK_LSHIFT
+local is_shift_pressed      = false
+local K_Timer               = false
+local level_object_by_id    = level.object_by_id
+local get_config            = arpg_mcm.get_config
+local mod_dmg               = get_config("damage_factor") or arpg_mcm.defaults["damage_factor"] or 0.1
+local bhs_patch             = bhs_fixed
+local log_battle            = false
+local log_absorb            = false
+local log_defence           = false
+local log_healing           = false
+local old_time              = 0
+local old_rank              = 0
+local used_npc              = {}
+local c_table               = {}
+local arpg_m                = {}
+local arpg_h                = {}
+local bs_table              = {}
+local anomaly_list          = {}
+local phys_list             = {}
+local parse_keys = utils_data.parse_string_keys
+
+local strRefund = "Item use refunded!"
+
+-- local meds                  = {"medkit", "medkit_army", "medkit_scientic", "survival_kit"}
+local heal_timeofuse = nil
+local radheal_timeofuse = nil
+local heal_timeoflasttick = nil
+local radheal_timeoflasttick = nil
+local heal_item_boost_time = 0
+local radheal_item_boost_time = 0
+local heal_per_sec = 0
+local radheal_per_sec = 0
+
+local firearms              = {}
+local get_game_factor = game_difficulties.get_game_factor
+
+func = callback_function
+on_end = on_end_function
+add_effect = function(self, func, on_end)
+	add_simple_timed_effect(60, func, on_end, "arpg_effect")
+end
+	  
+-- mod_dmg               = get_config("damage_factor")
+bhs_patch             = get_config("add_bhs")
+log_battle            = get_config("log_battle")
+log_absorb            = get_config("log_vamp")
+log_defence           = get_config("log_def")
+log_healing           = get_config("log_heal")
+
+----------------------------------------------------------------------------------------------
+---------------------------[NEW]Swap/Hoslter Speed Bonus Setup--------------------------------
+----------------------------------------------------------------------------------------------
+
+show_anims = {
+	anm_show = true,
+	anm_show_0 = true,
+	anm_show_1 = true,
+	anm_show_2 = true,
+	anm_show_empty = true
+}
+
+hide_anims = {
+	anm_hide = true,
+	anm_hide_0 = true,
+	anm_hide_1 = true,
+	anm_hide_2 = true,
+	anm_hide_empty = true
+}
+
+reload_anims = {
+	anm_reload = true,
+	anm_reload_empty = true,
+	anm_add_cartridge = true
+}
+
+----------------------------------------------------------------------------------------------
+------------------------[NEW] Medicine Loot Chance Setup (ZCP)--------------------------------
+----------------------------------------------------------------------------------------------
+
+meds_tier1 = {
+    "bandage",
+    "caffeine",
+    "drug_sleepingpills",
+    "yadylin",
+    "medkit",
+    "glucose_s",
+}
+
+meds_tier2 = {
+    "medkit_army",
+    "stimpack",
+    "salicidic_acid",
+    "glucose",
+    "drug_psy_blockade",
+    "akvatab",
+	"drug_coagulant",
+	"antirad",
+}
+
+meds_tier3 = {
+    "medkit_scientic",
+    "stimpack_army",
+    "drug_radioprotector",
+    "drug_anabiotic",
+	"drug_booster",
+    "antirad_cystamine",
+	"antirad_kalium",
+	"jgut",
+}
+
+meds_tier4 = {
+    "stimpack_scientic",
+	"adrenalin",
+	"morphine",
+	"survival_kit",
+	"tetanus",
+}
+
+meds_tier5 = {
+	"medkit_ai1",
+}
+
+-- creates an item with a random amount of uses or condition
+local function create_item_random_uses(i, box)
+    --smr_debug.get_log().info("loot/general", "Creating item with random uses: %s", i)
+    local max_uses = ini_sys:r_float_ex(i, "max_uses")
+    local se_item = alife_create_item(i, box)
+    if max_uses then
+        alife_process_item(i, se_item.id, {uses = (math.random(1, max_uses))})
+    elseif utils_item.is_degradable(nil, se_item.id) then
+        alife_process_item(i, se_item.id, {cond = (math.random(50,100)/100)})
+    end
+end
+
+local function roll_item_tiered(t, box, looter_level)
+    local r = looter_level
+    table.sort(t, function(a, b) return a[1] > b[1] end)
+    for i, n in ipairs(t) do
+        if (r >= n[1]) then
+            local itm = n[2][math.random(#n[2])]
+            smr_debug.get_log().info("loot/rolls", "Rolled succesfully for %s (%s >= %s)", itm, r, n[1])
+            create_item_random_uses(itm, box)
+            return true
+        end
+    end
+    return false
+end
+
+function try_spawn_meds(box, looter_level)
+    if math.random(1,100) <= looter_level then
+		local medChance = looter_level * math.random(1,3)
+        local tbl = {
+			{ 100, meds_tier5},
+            { 90, meds_tier4},
+            { 70, meds_tier3},
+            { 40, meds_tier2},
+            { 0, meds_tier1},
+        }
+        roll_item_tiered(tbl, box, medChance)
+    end
+end
+
+----------------------------------------------------------------------------------------------
+-------------------[NEW] System to Stun Targets (Arti's Ballistics)---------------------------
+----------------------------------------------------------------------------------------------
+local stun_anims = {
+    "norm_2_critical_hit_torso_0", -- good
+    "norm_1_critical_hit_head_0", -- good
+}
+
+function play_anim(npc)
+    if npc:movement_type() == move.walk or npc:movement_type() == move.run then
+        npc:set_movement_type(move.stand)
+    end
+    npc:play_cycle(stun_anims[math.random(#stun_anims)], true)
+end
+
+----------------------------------------------------------------------------------------------
+---------------------------------ЗАПОЛНЯЕМ ТАБЛИЧКИ-------------------------------------------
+----------------------------------------------------------------------------------------------
+c_table[0]                  = utils_xml.get_color("red")
+c_table[1]                  = utils_xml.get_color("d_cyan")
+c_table[2]                  = utils_xml.get_color("d_green")
+c_table[3]                  = utils_xml.get_color("yellow")
+c_table[4]                  = utils_xml.get_color("d_purple")
+c_table[5]                  = utils_xml.get_color("ui_gray_2")
+c_table[6]                  = utils_xml.get_color("d_orange")
+c_table[7]                  = utils_xml.get_color("ui_gray_2")
+c_table[8]                  = utils_xml.get_color("d_orange")
+c_table[9]                  = utils_xml.get_color("d_blue")
+c_table[10]                 = utils_xml.get_color("pda_blue")
+c_table[11]                 = utils_xml.get_color("d_red")
+c_table[12]                 = utils_xml.get_color("pda_white")
+c_table[13]                 = utils_xml.get_color("ui_gray_2")
+c_table[14]                 = utils_xml.get_color("ui_gray_2")
+c_table[15]                 = utils_xml.get_color("ui_gray_2")
+c_table[16]                 = utils_xml.get_color("ui_gray_2")
+c_table[17]                 = utils_xml.get_color("ui_gray_2")
+c_table[18]                 = utils_xml.get_color("ui_gray_2")
+c_table[19]                 = utils_xml.get_color("ui_gray_2")
+c_table[10]                 = utils_xml.get_color("ui_gray_2")
+----------------------------------------------------------------------------------------------
+arpg_m.smg                  = 0
+arpg_m.sgun                 = 0
+arpg_m.rifle                = 0
+arpg_m.tech                 = 0
+arpg_m.surv                 = 0
+arpg_m.mrdr                 = 0
+arpg_m.armor                = 0
+arpg_m.stlk                 = 0
+----------------------------------------------------------------------------------------------
+arpg_h.level                = 1
+arpg_h.points               = 0
+arpg_h.ghost_ammo           = false
+----------------------------------------------------------------------------------------------
+--bs_table.G_F1               = "nade_f1"
+--bs_table.G_F1_S             = "nade_gd5"
+--bs_table.G_RGD5_S           = "nade_rgd"
+--bs_table.II_BOLT            = "bolt"
+--bs_table.W_MOUNTD           = "turret"
+--bs_table.WP_BINOC           = "binocle"
+--bs_table.WP_KNIFE           = "melee"
+--bs_table.WP_LR300           = "smg"
+--bs_table.WP_PM              = "smg"
+--bs_table.WP_HPSA            = "smg"
+--bs_table.WP_USP45           = "smg"
+--bs_table.WP_WALTH           = "smg"
+--bs_table.WP_AK74            = "rifle"
+--bs_table.WP_GROZA           = "rifle"
+--bs_table.WP_SVD             = "rifle"
+--bs_table.WP_SVU             = "rifle"
+--bs_table.WP_VAL             = "rifle"
+--bs_table.WP_VINT            = "rifle"
+--bs_table.WP_ASHTG           = "sgun"
+--bs_table.WP_BM16            = "sgun"
+--bs_table.WP_RG6             = "sgun"
+--bs_table.WP_RPG7            = "sgun"
+--bs_table.WP_SHOTG           = "sgun"
+
+
+---- Better "sorting" tags ------------
+bs_table.w_explosive          = "explosive"
+--bs_table.G_F1_S             = "nade_gd5"
+--bs_table.G_RGD5_S           = "nade_rgd"
+--bs_table.w_mbolt           = "bolt"
+--bs_table.W_MOUNTD           = "turret"
+bs_table.w_misc           	= "misc"
+bs_table.w_melee          	= "sgun"
+bs_table.w_smg          	= "smg"
+bs_table.w_pistol          	= "smg"
+--bs_table.WP_PM              = "smg"
+--bs_table.WP_HPSA            = "smg"
+--bs_table.WP_USP45           = "smg"
+--bs_table.WP_WALTH           = "smg"
+bs_table.w_rifle            = "rifle"
+bs_table.w_sniper           = "sgun"
+--bs_table.WP_SVD             = "rifle"
+--bs_table.WP_SVU             = "rifle"
+--bs_table.WP_VAL             = "rifle"
+--bs_table.WP_VINT            = "rifle"
+bs_table.w_shotgun          = "sgun"
+--bs_table.heavy_weapon       = "sgun"
+----------------------------------------------------------------------------------------------
+anomaly_list[0]             = true
+anomaly_list[1]             = true
+anomaly_list[2]             = true
+anomaly_list[3]             = true
+anomaly_list[4]             = true
+anomaly_list[9]             = true
+anomaly_list[10]            = true
+anomaly_list[11]            = true
+anomaly_list[12]            = true
+anomaly_list[13]            = true --Тестовые включения
+anomaly_list[14]            = true
+anomaly_list[15]            = true
+anomaly_list[16]            = true
+anomaly_list[17]            = true
+anomaly_list[18]            = true
+anomaly_list[19]            = true
+anomaly_list[20]            = true
+----------------------------------------------------------------------------------------------
+phys_list[5]                = true
+phys_list[6]                = true
+phys_list[7]                = true
+phys_list[8]                = true
+----------------------------------------------------------------------------------------------
+bone_table = {}
+bone_table[0]  = {dmg = 2.00, txt = "=>_..._# Over the head"} -- макушка
+bone_table[1]  = {dmg = 2.00, txt = "=>(:::)# Nape shot"} -- затылок
+bone_table[2]  = {dmg = 1.10, txt = "=>(_Y_)# Buckshot"} -- пах
+bone_table[3]  = {dmg = 0.60, txt = "=>___Ib# Legshot"} -- левое бедро
+bone_table[4]  = {dmg = 0.30, txt = "=>___Ib# Legshot"} -- голень
+bone_table[5]  = {dmg = 0.10, txt = "=>___Ib# Heelshot"} -- пятку
+bone_table[6]  = {dmg = 0.05, txt = "=>___Ib# Feetshot"} -- стопа
+bone_table[7]  = {dmg = 0.60, txt = "=>___Ib# Legshot"} -- пр. бедро
+bone_table[8]  = {dmg = 0.30, txt = "=>___Ib# Legshot"} -- голень
+bone_table[9]  = {dmg = 0.10, txt = "=>___Ib# Heelshot"} -- пятку
+bone_table[10] = {dmg = 0.05, txt = "=>___Ib# Feetshot"} -- стопу
+bone_table[11] = {dmg = 1.00, txt = "=>(| |)# Stabshot"} -- живот
+bone_table[12] = {dmg = 1.00, txt = "=>(| |)# Stabshot"} -- грудь
+bone_table[13] = {dmg = 1.00, txt = "=>(| |)# Stabshot"} -- крестец
+bone_table[14] = {dmg = 2.50, txt = "=>II#~~  Neckshot"} -- шея
+bone_table[15] = {dmg = 4.00, txt = "=>(x _ x# Headshot"} -- жбан
+
+bone_table[16] = {dmg = 5.00, txt = "=>#_0 To the eye!"} -- л.глаз
+bone_table[17] = {dmg = 5.00, txt = "=>0_# To the eye!"} -- п.глаз
+bone_table[18] = {dmg = 5.00, txt = "=>(>#< Between the eyes!"} -- переносица
+bone_table[19] = {dmg = 3.00, txt = "=>IuuI# Jawshot"} -- челюсть
+
+bone_table[20] = {dmg = 0.85, txt = "=>8=#=8 Clavicle off"} -- л.ключица
+bone_table[21] = {dmg = 0.60, txt = "=>T'''# Holliwood hit"} -- л.плечо
+bone_table[22] = {dmg = 0.70, txt = "=>d# Left arm hit"} -- предплечье
+bone_table[23] = {dmg = 0.60, txt = "=>q# Armshot"} -- запястье
+bone_table[24] = {dmg = 0.50, txt = "=>;#,,,, Toeshot"} -- большой палец
+bone_table[25] = {dmg = 0.50, txt = "=>;#,,,, Toeshot"} -- большой палец
+bone_table[26] = {dmg = 0.50, txt = "=>;#,,,, Toeshot"} -- большой палец
+bone_table[27] = {dmg = 0.40, txt = "=>,;#,,, Midfinger shot"} -- средний палец
+bone_table[28] = {dmg = 0.40, txt = "=>,;#,,, Midfinger shot"} -- средний палец
+bone_table[29] = {dmg = 0.40, txt = "=>,;#,,, Midfinger shot"} -- средний палец
+bone_table[30] = {dmg = 0.30, txt = "=>,,,,;# Pinky-shot"} -- мизинчик
+bone_table[31] = {dmg = 0.30, txt = "=>,,,,;# Pinky-shot"} -- мизинчик
+bone_table[32] = {dmg = 0.30, txt = "=>,,,,;# Pinky-shot"} -- мизинчик
+
+bone_table[33] = {dmg = 0.85, txt = "=>8=#=8 Clavicle off"} -- п.ключица
+bone_table[34] = {dmg = 0.60, txt = "=>'''T# Holliwood hit"} -- плечо
+bone_table[35] = {dmg = 0.50, txt = "=>b# Right arm hit"} -- предплечье
+bone_table[36] = {dmg = 0.25, txt = "=>p# Armshot"} -- запястье
+bone_table[37] = {dmg = 0.10, txt = "=>(x _ x# Headshot"} -- большой палец
+bone_table[38] = {dmg = 0.10, txt = "=>(x _ x# Headshot"} -- большой палец
+bone_table[39] = {dmg = 0.10, txt = "=>(x _ x# Headshot"} -- большой палец
+bone_table[40] = {dmg = 0.07, txt = "=>(x _ x# Headshot"} -- средний палец
+bone_table[41] = {dmg = 0.07, txt = "=>(x _ x# Headshot"} -- средний палец
+bone_table[42] = {dmg = 0.07, txt = "=>(x _ x# Headshot"} -- средний палец
+bone_table[43] = {dmg = 0.05, txt = "=>,,,,;# Pinky-shot"} -- мизинчик
+bone_table[44] = {dmg = 0.05, txt = "=>,,,,;# Pinky-shot"} -- мизинчик
+bone_table[45] = {dmg = 0.05, txt = "=>,,,,;# Pinky-shot"} -- мизинчик
+----------------------------------------------------------------------------------------------
+--------------------------------УТИЛИТЫ, ПРОВЕРКИ, ИНФОРМАЦИЯ---------------------------------
+----------------------------------------------------------------------------------------------
+function get_locals(entry, weapon)
+    local weapon        = weapon or db.actor:active_item()
+    if not weapon then  printf("No weapons found") return end
+    if not entry then return weapon end
+    local vl = {}
+    vl.weapon             = weapon or nil
+    vl.id                 = weapon:id()
+    vl.sec                = weapon:section()
+    vl.health             = weapon:condition()
+    vl.name               = gt(ini_sys:r_string_ex(vl.sec,"inv_name_short")) or nil
+    vl.class              = ini_sys:r_string(vl.sec, "class") or nil
+    vl.kind               = ini_sys:r_string(vl.sec, "kind") or nil
+    vl.clip               = ini_sys:r_float_ex(vl.sec, "ammo_mag_size") or 0
+	vl.sort               = sortK_of(weapon)			-- using better "sort" using "kind" instead of "class"
+    vl.IsGun              = IsFirearm(vl.sort)
+	
+    return vl[entry]
+end
+----------------------------------------------------------------------------------------------
+--Всякая фигня для проверки и тестов
+function actor_on_jump()
+    printf("Hi! I am testing unit")
+    printf('testing info unit')
+    printf('%s', get_locals("health"))
+end
+
+----------------------------------------------------------------------------------------------
+--function sort_of(weapon)
+--    if not weapon then return "empty hands" end
+--    local class = ini_sys:r_string(weapon:section(), "class") or nil
+--    return bs_table[class]
+--end
+
+------------------ Better Sorting method ---------------------------
+
+function sortK_of(weapon)
+    if not weapon then return "empty hands" end
+    local kind = ini_sys:r_string(weapon:section(), "kind") or nil
+	if kind == "w_explosive" then
+		local slot = ini_sys:r_string(weapon:section(), "slot")
+		if slot ~= "3" then
+			local class = ini_sys:r_string(weapon:section(), "weapon_class")
+			if class == "heavy_weapon" then
+				kind = "w_shotgun"
+			end	
+		end
+	end
+    return bs_table[kind]
+end
+----------------------------------------------------------------------------------------------
+function IsFirearm(sort)
+    local fa = false
+    for _, value in pairs(firearms) do
+        if value == sort then fa = true end
+    end
+    return fa
+end
+----------------------------------------------------------------------------------------------
+function weapon_mastery()
+    local sort = get_locals("sort")
+    local mastery = 0
+    if sort == "smg" then
+        mastery = arpg_m.smg
+    elseif sort == "rifle" then
+        mastery = arpg_m.rifle
+    elseif sort == "sgun" then
+        mastery = arpg_m.sgun
+    end
+    return mastery
+end
+----------------------------------------------------------------------------------------------
+-----------------------------------СЕКЦИЯ РПГ-МЕХАНИКИ----------------------------------------
+----------------------------------------------------------------------------------------------
+--Эта функция обеспечит выдачу скиллов вплоть до 352 уровня
+function skill_req(level)
+    return math.floor(level ^ 1.95)
+end
+----------------------------------------------------------------------------------------------
+function req_increment()
+    return math.floor((arpg_h.level * 10) ^ 1.4)
+end
+----------------------------------------------------------------------------------------------
+function set_levelup()
+    local new_rank = db.actor:character_rank()
+    if new_rank > req_increment() then
+		news_manager.send_tip(db.actor, gt("rpg_lvlup"), nil, "arpg_skill_surv", 6000)
+        arpg_h.level = arpg_h.level + 1
+        arpg_h.points  = arpg_h.points + 1
+    end
+    ----В модном стиле добавляем веса и скорости
+	-- local carry_weight = get_game_factor("weight") or 20
+    --local weight_bonus = arpg_h.level * 0.5000
+    --local speed_bonus1 = 1.51 * (1 + arpg_h.level * 0.005)
+    --local speed_bonus2 = (1 + arpg_h.level * 0.005)
+    --local speed_bonus3 = 1.75 * (1 + arpg_h.level * 0.005)
+    --db.actor:set_actor_max_weight(carry_weight + weight_bonus)
+    --db.actor:set_actor_max_walk_weight(carry_weight + math.floor(weight_bonus * 1.4))
+    --db.actor:set_actor_run_coef(speed_bonus1)
+    --db.actor:set_actor_runback_coef(speed_bonus2)
+    --db.actor:set_actor_sprint_koef(speed_bonus3)
+	-- removing the carry weight + speed bonus (GAMMA covers this with Skills mod)
+end
+---------------------------------------------------------------------------------------------- [NEW] Weapon Swap Speed Bonus (Utjan's Skills Expansion)
+function swapping_weapons(anim_table,obj)
+	if not IsWeapon(obj) then return end
+	
+	local anm_speed = anim_table.anm_speed
+	
+	if show_anims[anim_table.anm_name] or hide_anims[anim_table.anm_name] then
+		if weapon_mastery() then
+			anim_table.anm_speed = anm_speed * (1 + (weapon_mastery()* 0.01))
+			--printf("Weapon Handling Show/Hide")
+		end		
+	end
+end
+----------------------------------------------------------------------------------------------
+function der_hitman(victim, killer)
+    if not killer then return end
+    if killer:id() ~= db.actor:id() then return end
+    printf("set perk manager")
+    perk_manager(victim)
+    ------Сталкер-2. Радар -----------------------> [NEW] Moved from Skill 2 to Skill 1 for Stalker Tree to compensate Skill 1 not working
+    if arpg_m.stlk >= skill_req(2) then
+        level.map_add_object_spot_ser(victim:id(), "deadbody_location")
+    end
+    ----Сталкер-6. Восстановление патронов в обойме. -----> Auto-Loading on Kill/Warlock
+    if arpg_m.stlk >= skill_req(6) then
+        printf("magicin some ammo")
+        local weapon = get_locals()
+		if not weapon then return end
+		local weaponKiller = get_locals("weapon")
+        local clip   = get_locals("clip")
+		if clip <= 3 then return end
+		local ammo_list = utils_item.get_ammo(weaponEquipped:section(), weaponEquipped:id())
+		local ammoCurrent = weaponEquipped:get_ammo_type()
+		local ammoSec = ammo_list[ammoCurrent + 1]
+	
+        local regain = math.floor(clip/3)
+		local text = "Ammo Regained: " .. regain
+        sms(2, text, 5) -- сообщение чуть повыше
+		alife_create_item(ammoSec, db.actor, {ammo = regain})
+	end
+end
+----------------------------------------------------------------------------------------------
+function der_hunter(victim,killer)
+    if not killer then return end
+    if killer:id() ~= db.actor:id() then return end
+    printf("set perk manager")
+    perk_manager(victim)
+    ------Сталкер-2. Радар
+    if arpg_m.stlk >= skill_req(2) then
+        level.map_add_object_spot_ser(victim:id(), "tushka_location")
+    end
+end
+----------------------------------------------------------------------------------------------
+--------------------------------СЕКЦИЯ ВЫДАЧИ БОНУСОВ-----------------------------------------
+----------------------------------------------------------------------------------------------
+function kaboom(npc, dice)
+    local booms = {}
+    booms.smg = "mine_new_blow"
+    booms.sgun = "explosive_hide"
+    local myboom = booms[get_locals("sort")]
+    local npc_id = npc:id()
+    local npc_position = npc:position()
+    local npc_level_vertex_id = npc:level_vertex_id()
+    local npc_game_vertex_id = npc:game_vertex_id()
+    if dice and is_shift_pressed then 
+        function explode(explode_id)
+            local explode_obj = get_object_by_id(explode_id)
+            if explode_obj then
+                local sim = alife()
+                sim:release(sim:object(npc_id))
+                explode_obj:explode(0)
+                return true
+            end
+            return false
+        end
+        printf("Dice is %s, let's boom", dice)
+        local explode_obj = alife_create_item(myboom, {npc_position, npc_level_vertex_id, npc_game_vertex_id, nil})
+        CreateTimeEvent(explode_obj.id, explode_obj.id, 0, explode, explode_obj.id)
+		npc:kill(db.actor)
+    else
+        printf("No luck this time, dice is %s", dice)
+    end
+end
+----------------------------------------------------------------------------------------------
+function perk_manager(victim)
+	
+----Механик-1. Медленная разрядка приборов ---------------------------------> Careful Handler (changed to "charge" on kill to match Bloody Tech's other skill behaviors)
+    if arpg_m.tech >= skill_req(1) then
+		local deviceBonus = 50 + (25 * arpg_m.tech)
+        for i = 8, 10 do
+            local item = db.actor:item_in_slot(i)
+            if item then
+                local condition = item:condition()
+                if condition < 1 and condition >= 0.01 then
+                    item:set_condition(condition + (deviceBonus/10000))
+                end
+            end
+        end
+    end
+	
+---- Сталкер-7. Некроман ---------> Vampire healing and stamina regen on kill
+    if arpg_m.stlk >= skill_req(5) then
+        if db.actor.health < 1 then
+            db.actor:change_health(0.0025)
+        end
+        if db.actor.power < 1 then
+            db.actor:change_power(0.0025)
+        end
+        if log_absorb then
+            local vamp_msg = gt("rpg_vamp3") .. " 2.5% " ..  gt("rpg_vamp11")
+            db.actor:give_game_news("ui_mcm_arpg_log_vamp", vamp_msg, "arpg_perk5_0", 0, 100)
+        end
+    end
+	
+-----------------------------------> Necromancer Psy Health Restore on kill
+	if arpg_m.stlk >= skill_req(7) then
+		arszi_psy.manage_psy_health()
+	end
+------Механик-2. Самопочинка шлема через килл -----------> Helmet Kill-Repair
+    if arpg_m.tech >= skill_req(2) then
+        local helmet = db.actor:item_in_slot(12)
+        if helmet then
+            local helmet_health = helmet:condition()
+            local repair_total = helmet_health + 0.005 + (0.00025 * arpg_m.surv)
+            if repair_total <= 1 then
+                helmet:set_condition(repair_total)
+			elseif (helmet_health < 1) and (repair_total >= 1) then
+				helmet:set_condition(1)
+            end
+        end
+    end
+--------Механик-3. Починка пушек через килл -------------> Weapon Kill-Repair
+    if arpg_m.tech >= skill_req(3) then
+        local weapon = get_locals()
+        --if weapon and get_locals("IsGun") then
+		if weapon and (not IsMelee(weapon)) then			-- will look to change to include melee weapons since they are now Special Weapons
+			local weaponRepair = get_locals("weapon")
+			local weaponHealth = get_locals("health")
+            local repairBonus = 0.005 + (0.00025 * weapon_mastery())
+			local wpnCondition = weaponHealth + repairBonus
+            if wpnCondition < 1 then
+                weaponRepair:set_condition(wpnCondition)
+			elseif (weaponHealth < 1) and (wpnCondition >= 1) then
+				weaponRepair:set_condition(1)
+            end
+			local saved_parts = item_parts.get_parts_con(weaponRepair) or 0
+			if saved_parts ~= 0 then
+				local partBonus = 1 + math.floor(weapon_mastery()/2)
+				for k,v in pairs(saved_parts) do
+					if (v >= 0) and (v < 99) and ((v + partBonus) < 99) then
+						saved_parts[k] = v + partBonus
+					elseif (v >= 0) and ((v + partBonus) >= 99) then
+						saved_parts[k] = 99
+					end
+				end
+			end
+        end
+    end
+---------- Механик-5. Починка броника через килл ---------> Armor Kill-Repair
+    if arpg_m.tech >= skill_req(5) then
+        local armor = db.actor:item_in_slot(7)
+        if armor then
+            local armor_health = armor:condition()
+            local repair_total = armor_health + 0.005 + (arpg_m.armor * 0.00025)
+            if repair_total <= 1 then
+                armor:set_condition(repair_total)
+			elseif (armor_health < 1) and (repair_total >= 1) then
+                armor:set_condition(1)
+            end
+        end
+    end
+end
+----------------------------------------------------------------------------------------------
+function loot_improvement(item)	--actor_on_item_take(item)
+    local bonus = 1
+------Мародёр 2. Качество собираемых пушек	----------> Weapon Loot Improved Condition (needs to be reworked; look at outfit_drop_mcm.script)
+    if IsWeapon(item) then
+		-- check picked-up weapon's class
+		local class = get_locals("sort", item)
+		if class == "smg" then class = arpg_m.smg
+		elseif class == "rifle" then class = arpg_m.rifle
+		elseif class == "sgun" then class = arpg_m.sgun
+		else class = 0
+		end
+		
+        if arpg_m.mrdr >= skill_req(4) then
+            local bonusWeapon = 0.1 + (class * 0.005)
+            if item:condition() < bonusWeapon then
+                item:set_condition(bonusWeapon)
+            end
+			if (not IsMelee(item)) then
+				local wpn_parts = item_parts.get_parts_con(item) or 0
+				if wpn_parts ~= 0 then
+					local bonusParts = 10 + math.floor(class * 0.5)
+					for k,v in pairs(wpn_parts) do
+						if v >= 0 and v < bonusParts then
+							wpn_parts[k] = bonusParts
+						end
+					end
+				end
+			end
+        end
+    end
+------Мародёр 3. Качество собираемых броников ---------> Armor/Helmet Loot Improved Condition (needs to be reworked; look at outfit_drop_mcm.script)
+    if IsOutfit(item) or IsHeadgear(item) then
+        if arpg_m.mrdr >= skill_req(5) then
+            local bonusOutfit = 0.1 + (arpg_m.armor * 0.005)
+            if item:condition() < bonusOutfit then
+                item:set_condition(bonusOutfit)
+            end
+        end
+    end
+	
+------[NEW] Arte-finder functionality (increases to GAMMA's min and max thresholds)
+	
+	-- if arpg_m.mrdr >= skill_req(3) and grok_artefacts_random_condition and grok_artefacts_random_condition.grok_arti_random_efficiency then
+	if arpg_m.mrdr >= skill_req(3) then
+		local typeOfArtefact = SYS_GetParam(0, item:section(), "kind")
+		if IsArtefact(item) or (typeOfArtefact == "i_arty_cont") then
+			local minCondition = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3))
+			local maxCondition = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))
+			if item:condition() < (minCondition/100) then
+				local condArty  = (math.random(minCondition, maxCondition) / 100)
+				item:set_condition(condArty)
+			end
+		end
+	end
+		
+
+------Мародёр-6: увеличивает количество собираемого бабла на 3% за уровень. --------> May need looking at for same reason as above
+    if IsItem("money", item:section()) then
+        if used_wallet then
+        used_wallet = false
+            return
+        end
+        local mult = 1
+        if arpg_m.mrdr >= skill_req(6) then
+            mult = 1.05 + (arpg_m.mrdr - skill_req(6)) * 0.01
+        end
+        local money_amount = IsItem("money", item:section())
+        if money_amount and money_amount[1] then
+            if money_amount[2] then
+                local min_amt = math.floor(tonumber(money_amount[1])) * mult or 10
+                local max_amt = math.floor(tonumber(money_amount[2])) * mult or 30
+                db.actor:give_money(math.random(min_amt, max_amt))
+            else
+                local amount = math.floor(tonumber(money_amount[1])) * mult or 10
+                db.actor:give_money(amount)
+            end
+        end
+        db.actor:drop_item(item)
+    end
+end
+----------------------------------------------------------------------------------------------
+function actor_on_weapon_jammed()
+--------Механик-4. Починка заклинившего оружия ------------> Unjammer Repair
+    local weapon = get_locals()
+	local weaponJammed = get_locals("weapon")
+    local health = get_locals("health")
+    if arpg_m.tech >= skill_req(4) then
+        --if health < 0.5 then
+            --local text = gt("arpg_isjammed_healing")
+            --sms(2, text, 5) -- сообщение чуть повыше
+            --local repair = 0.05 + 0.01 * (arpg_m.tech - skill_req(3))
+            --weaponJammed:set_condition(health + repair)
+			
+        --end
+		local wpn_parts = item_parts.get_parts_con(weaponJammed) or 0
+		--local checkingJam = arti_jamming.check_unjam(weaponJammed)
+		if wpn_parts ~= 0 then
+		--if wpn_parts ~= 0 and checkingJam then
+			local repair = 5 + (arpg_m.tech - skill_req(3))
+			local part_toHeal = random_key_table(wpn_parts)
+			local part_condition = wpn_parts[part_toHeal]
+			if part_condition >= 0 and (part_condition + repair) < 99 then
+				wpn_parts[part_toHeal] = part_condition + repair
+			elseif part_condition >= 0 and (part_condition + repair) >= 99 then
+				wpn_parts[part_toHeal] = 99
+			end
+		end
+    end
+end
+----------------------------------------------------------------------------------------------
+----Оружейка-1. Призрачные патроны, оружие восстанавливает по 1% за уровень мастерства -------> Ghost Ammo [DELETE]
+--function actor_on_weapon_no_ammo()
+--    local weapon = get_locals()
+--    if not weapon then return end
+--	local weaponEquipped = get_locals("weapon")
+--    local clip   = get_locals("clip")
+    --Проверка на навык владения оружием
+--    if weapon_mastery() >= 1 and arpg_h.ghost_ammo then
+	
+--		local ammo_list = utils_item.get_ammo(weaponEquipped:section(), weaponEquipped:id())
+--		local ammoCurrent = weaponEquipped:get_ammo_type()
+--		local ammoSec = ammo_list[ammoCurrent + 1]
+	
+--        local regain = 1 + math.floor(clip * weapon_mastery() * 0.01)
+--        local text = gt("arpg_ghost") .. " " .. regain
+--        sms(2, text, 5) -- сообщение чуть повыше
+        --weapon:set_ammo_elapsed(regain)
+--		alife_create_item(ammoSec, db.actor, {ammo = regain})
+--		arpg_h.ghost_ammo = false
+--    end
+--end
+
+
+----------------------------------------------------------------------------------------------
+----Оружейка-1.1 Защита от абьюзеров, чтобы постоянно не бегали с пустым стволом -------> Rad-Removal on Reload (Duke Nukem lol)
+function actor_on_weapon_reload()
+----Сталкер-3. Вывод радиации с перезарядкой 25% + 1% за уровень / now 1% + 1%
+    if arpg_m.stlk >= skill_req(3) then
+        if db.actor.radiation > 0 then
+            local dec = 0.01 + (arpg_m.stlk - skill_req(3)) * 0.01
+            db.actor.radiation = db.actor.radiation * (1 - dec)
+            if log_healing then
+                msg = gt("rpg_heal1") .. " " ..dec * 100 .. "%"  .. gt("rpg_heal2")
+                db.actor:give_game_news("ui_mcm_arpg_log_heal", msg, "arpg_perk3_0", 0, 100)
+            end
+        end
+    end
+end
+----------------------------------------------------------------------------------------------
+function der_shooter(npc, shit, bone_id, flags)
+-----Проверка, чтобы эта секция касалась только и исключительно нас!!!
+    --Верификация данных
+    --shit
+	local isCompanion = npc:has_info("npcx_is_companion")
+	if isCompanion then return end
+	
+    if shit.power >= 50 then return end
+    if not (shit.draftsman and shit.draftsman:id() == 0) then return end
+    if shit.draftsman:id() ~= db.actor:id() then return end
+    --Firearms и баллистика (упрощённая)
+    local weapon   = get_locals()
+    if not weapon then return end
+
+    --Информационный блок
+    local level  = weapon_mastery()
+    local species = ini_sys:r_string_ex(npc:section(),"community") or "zombie"
+    local bl_victim = IsMonster(nil,npc:clsid()) and gt("encyclopedia_mutants_" .. species) or npc:character_name()
+	local criticalHit = perk_based_artefacts_bone_mapper.is_critical_bone(npc:clsid(), bone_id)
+    
+    --Применение скиллов
+    local is_stunned = perk_based_artefacts_bone_mapper.is_leg_bone(npc:clsid(), bone_id)
+    -- local is_breaked = ((bone_id >=20) and (bone_id <= 23)) or ((bone_id >=33) and (bone_id <= 36))
+	local is_breaked = ((bone_id >=20) and (bone_id <= 45))
+    -- Разоружаем только попаданием в правую руку
+    local is_breaked2 = bone_id >=36
+
+    local base_shit = shit.power
+    local dmg_increase = 1
+	local dmg_mult = 1
+
+------Сталкер-7. Урон некроманта по нежити 50%	---> Necromancer (undead damage bonus)
+    if arpg_m.stlk >= skill_req(7) then
+        if species == "zombie" then
+            dmg_increase = dmg_increase + 0.25
+        end
+    end
+----Оружейка-2. Увеличение урона.	------> Heavy Shot Skills
+    if (level >= skill_req(2)) and (mod_dmg > 0) then
+----Heavy Shot I
+
+		dmg_increase = dmg_increase + mod_dmg
+			
+----Heavy Shot II
+
+		if ( (get_locals("sort") == "sgun") and (level >= skill_req(3)) ) or ( (get_locals("sort") == "rifle") and (level >= skill_req(5)) ) then
+			-- shit.power = shit.power * (1 + (mod_dmg * 3))
+			dmg_increase = dmg_increase + mod_dmg
+		end
+----Heavy Shot III
+
+		if ( (get_locals("sort") == "sgun") and (level >= skill_req(4)) ) then
+			-- shit.power = shit.power * (1 + mod_dmg)
+			dmg_increase = dmg_increase + mod_dmg
+		end
+    end
+	
+------Выживание-2. Доп урон из всего на 5%	----> Tree 5-2 (flat 5% damage increase)
+    if arpg_m.surv >= skill_req(2) then
+        dmg_mult = dmg_mult + 0.05
+    end
+	
+------Оружейка-6.Бронебойный выстрел - 20% по броне и 2% за каждый новый уровень ------> Armor Breaker
+    if level >= skill_req(6) then
+        dmg_mult = dmg_mult + (.05 + (0.01 * (level - skill_req(6))))
+    end
+
+----Выдача финального урона
+    shit.power = (shit.power * dmg_increase) * dmg_mult
+
+------Следующие навыки и проверки работают только с живым противником
+    if npc.health > 0 then -----------------------------------------------------------------------------------
+----Оружейка-4. Станящий выстрел при попадании в ногу из винтовки ---------> Stun Shot (Rifle)
+        if (is_stunned and (level >= skill_req(3)) and (get_locals("sort") == "rifle")) then
+			-- if IsStalker(npc) then
+				-- npc:movement_enabled(false)
+				--npc:set_movement_type(move.stand)
+				--npc:set_body_state(move.standing)
+			--else
+				--local npc_position = npc:position()
+				--npc_position = npc:position()
+			--end
+			
+			--npc:movement_enabled(false)
+			
+			-- [EXPERIMENTAL] Stun Shot based on Arti's Ballistics
+			play_anim(npc)
+			
+            sms(2, gt("arpg_disabled"), 5)
+        end
+-------------------------------------------------------------------------> Bloody Mess (SMG)/Bloodbath (Special)
+		if (weapon_mastery() >= skill_req(5)) and ((get_locals("sort") == "smg") or (get_locals("sort") == "sgun")) then
+			local dice = math.random(100) >= 75
+			kaboom(npc, dice)
+		end
+		
+----Оружейка-5. Ломающий выстрел при попадании в руку из смг	-----------> Enemy Weapon Jammer/Breaker (SMG/Pistol)
+        if is_breaked and (level >= skill_req(3)) and (get_locals("sort") == "smg") then
+            local weapon2 = npc:active_item() --Багает оружие противника
+            if weapon2 then weapon2:unload_magazine(false) end
+            sms(2, gt("arpg_jammed"), 5)
+        end
+------Сталкер-7. Вампиризми -------------------> Necromancer
+        if arpg_m.stlk >= skill_req(7) then
+			local leech = (shit.power * (0.00001 +((arpg_m.stlk - skill_req(7)) * 0.00001)))
+            db.actor:change_health(leech)
+            if log_absorb then
+                msg = gt("rpg_vamp1") .. " " .. leech .. " " .. gt("rpg_vamp2")
+                db.actor:give_game_news("ui_mcm_arpg_log_vamp", msg, "arpg_perk5_1", 0, 100)
+            end
+        end
+--------Оружейка-4. Платный хэдшот и -------------> Headshot bonus money/exp (Pumpkin/Headhunter)
+    -- if (level >= skill_req(4)) and (bone_id == 15) then
+	if (level >= skill_req(4)) and criticalHit then
+        if get_locals("sort") ~= "sgun" then
+			local headMoney = (level + 1 - skill_req(4)) * 20
+            db.actor:give_money(headMoney)
+            text = "+" .. level * 10 .. " " .. gt("arpg_headshot")
+            db.actor:set_character_rank(db.actor:character_rank() + 1)
+            if log_battle then sms(2, text, 5) end
+        end
+    end
+    
+-------- Ghost Ammo v3.0
+	if level >= skill_req(1) then
+		local weaponFired = get_locals("weapon")
+		local ammo_list = utils_item.get_ammo(weaponFired:section(), weaponFired:id())
+		local ammoCurrent = weaponFired:get_ammo_type()
+		local ammoSec = ammo_list[ammoCurrent + 1]
+		local ghostChance = 4 + level		-- equals to a base chance of 0.5%
+		-- if (bone_id == 15) then
+		if criticalHit then
+			ghostChance = ghostChance * 2
+		end
+		if ghostChance >= math.random(1000) then
+			local text = gt("arpg_ghost")
+			sms(2, text, 5) -- сообщение чуть повыше
+			alife_create_item(ammoSec, db.actor, {ammo = 1})
+		end
+	end
+
+------Оружейка-7. Обезоруживание при попадании в руку ------------> Disarming Shot
+        if (level >= skill_req(7)) and is_breaked2 then
+            local weapon2 = npc:active_item()
+			local dropChance = math.random(100) <= (5 + (level - skill_req(7)))
+            if weapon and weapon2 and dropChance then
+				local maxCondition = 15 + arpg_m.mrdr
+				weapon2:set_condition(math.random(15, maxCondition))
+				npc:drop_item(weapon2)
+			end
+            if log_battle then sms(2, gt("arpg_disarmed"), 5) end
+        end
+------Батл-лог
+
+        if log_battle then
+            local total_shit = math.floor(shit.power * 100000)
+            local bonus_shit = total_shit - math.floor(base_shit * 100000)
+            local gun_name = gt(ini_sys:r_string_ex(weapon:section(),"inv_name_short"))
+            --Если нет кости, то весь урон летит в жбан
+            local bone_id = (bone_id < 45) and bone_id or 15
+            printf("%s", bone_id)
+            printf("Target hit: %s", bone_table[bone_id]["txt"])
+
+            local msg
+            msg = gt("rpg_hit_1") .. " " .. bl_victim .. "- "
+            if shit.power < 4 then
+                msg = msg .. c_table[12] .. gt("rpg_hit_2") .. " a total base damage of " .. c_table[9] .. total_shit .. " "
+                msg = msg .. c_table[12] .. gt("rpg_hit_3") .. " " .. gt("carpg_bones_z") .. " " .. gt("carpg_bones_" .. bone_id) .. " " .. gt("rpg_hit_4")
+                msg = msg .. " " .. gun_name .. ". "
+                msg = msg .. "(" .. c_table[3] .. "+" .. bonus_shit .. c_table[12] .. " from "
+                msg = msg .. c_table[0] .. "x" .. dmg_mult .. c_table[12] .. " " .. gt("rpg_hit_5") .. ")"
+            else
+                msg = msg .. gt("carpg_bones_end")
+            end
+            db.actor:give_game_news("ui_mcm_arpg_log_battle", msg, "ui_inGame2_neutral_1", 0, 100)
+        end
+    end
+end
+----------------------------------------------------------------------------------------------
+function der_ninja(shit)
+    if shit.power <= 0 then return end
+    local base_shit = shit.power
+    local damage_mult = 1
+    base_shit = shit.power
+    shit.type = shit.type or 0
+------ Выживальщик-5. Тотальный иммунитет 15%. Не возрастает ----------> Ignorant One (damage resistance)
+    if arpg_m.surv > skill_req(5) then
+        damage_mult = damage_mult * 0.975
+    end
+----Броненосец-2. Физический иммунитет 25% + 1% за уровень ------------> Traditional Kevlar : damage reduction of 0.5% + 0.1% per Armor Level after unlocking this skill
+    if arpg_m.armor >= skill_req(2) then
+        if phys_list[shit.type] then
+            damage_mult = damage_mult * (1 - (0.0005 + (0.0001 * (arpg_m.armor - skill_req(2)))))
+        end
+    end
+----Броненосец-3. Защита от всего 15%. Не возрастает ------------------> Ignorant Two (rename to Thick Skin) : another damage reduction of 5%
+    if arpg_m.armor >= skill_req(3) then
+        damage_mult = damage_mult * 0.975
+    end
+----Броненосец-5. Аномальный иммунитет 25% + 1% за уровень ------------> Anomalous Materials (anomaly damage resistance)
+    if arpg_m.armor >= skill_req(5) then
+        if anomaly_list[shit.type] then
+            damage_mult = damage_mult * (1 - (0.01 + (0.005 * (arpg_m.armor - skill_req(5)))))
+        end
+    end
+----Броненосец-4. Отражение 50% + 1% за уровень -----------------------> Spike Reflect Damage (redone to avoid using the kill command)
+    if shit.draftsman and (arpg_m.armor >= skill_req(4)) then
+		if phys_list[shit.type] then
+			local spike = base_shit * (0.01 + ((arpg_m.armor - skill_req(4)) * 0.0025))
+			--shit.draftsman.health = shit.draftsman.health - spike
+			shit.power = spike
+			--if spike > shit.draftsman.health then
+				--shit.draftsman:kill(db.actor)
+			--end
+			shit.draftsman:hit(shit)
+			
+			-- Make sure to return hit back to normal values for the true damage reduction
+			shit.power = base_shit
+			
+			if log_defence and spike > 0.1 then
+				msg = gt("rpg_def") .. " " .. gt("rpg_def1") .. " " .. math.floor(spike * 1000) / 10 .. " " .. gt("rpg_hit_3")
+				db.actor:give_game_news("ui_mcm_arpg_log_def", msg, "arpg_armor4", 0, 100)
+			end
+		end
+    end
+----Броненосец-6 и выживальщик-4. Уворот -----------------------------> Dodger (0.1% chance to dodge damage; 1% chance when both Armoror 6 and Surv. 4 are acquired)
+    if (arpg_m.armor >= skill_req(6)) and (arpg_m.surv >= skill_req(4)) then
+		local dice = math.random(1000) <= 5
+		if dice then
+			damage_mult = 0
+			if log_defence then
+				msg = gt("rpg_def") .. " " .. gt("rpg_def3")
+				db.actor:give_game_news("ui_mcm_arpg_log_def", msg, "arpg_armor6", 0, 100)
+			end
+		end
+	elseif (arpg_m.armor >= skill_req(6)) or (arpg_m.surv >= skill_req(4)) then
+		local dice = math.random(1000) <= 1
+		if dice then
+			damage_mult = 0
+			if log_defence then
+				msg = gt("rpg_def") .. " " .. gt("rpg_def3")
+				db.actor:give_game_news("ui_mcm_arpg_log_def", msg, "arpg_armor6", 0, 100)
+			end
+		end
+    end
+	
+	shit.power = shit.power * damage_mult
+	
+    printf("damage type number %s", shit.type)
+    if log_battle then
+        local total_dmg = math.floor(shit.power * 1000) / 10
+        local g_dmg = total_dmg > 0 and total_dmg or 0
+        local base_dmg = math.floor(base_shit * 1000) / 10
+        local def_level = 100 -  100 * base_dmg / total_dmg
+        -- Получено 0.5 урона (токсичный ожог: 0.5 = 0.5 - 0% защиты)
+        -- Получено (цвет) 0.5 урона
+        local msg = gt("rpg_1") .. " " .. c_table[shit.type] .. ts(total_dmg) .. c_table[12] .. " " .. gt("rpg_hit_3")
+        --(тип урона:
+        msg = msg .. "(" .. gt("rpg_dmg_" .. shit.type) .. ": "
+        -- Начальный урон - % защита)
+        msg = msg .. c_table[shit.type] .. ts(base_dmg) .. c_table[12] .. ts(def_level) .. "%)"
+        db.actor:give_game_news("rpg_logger", msg, "ui_inGame2_neutral_1", 0, 100)
+        local text = "damage number" .. shit.type
+    end
+end
+----------------------------------------------------------------------------------------------
+function der_runner()
+---- Сталкер-4. Реген 0.05% хп + 0.01% за уровень -------------> Runner
+    if arpg_m.stlk >= skill_req(4) then
+        local bonus = 0.00005 + (arpg_m.stlk - skill_req(4)) * 0.00001
+        if db.actor.health < 1.0 then 
+            db.actor:change_health(bonus)
+            if log_healing then
+                msg = gt("rpg_vamp3") .. " " .. bonus .. "% " .. gt("rpg_vamp2")
+                db.actor:give_game_news("ui_mcm_arpg_log_heal", msg, "arpg_perk4_0", 0, 100)
+            end
+        end
+    end
+end
+----------------------------------------------------------------------------------------------
+-- local function actor_on_update()
+function actor_on_update()
+    if time_global() < old_time then return end
+    old_time = time_global() + 200
+------Новая система прокачки. Опыт дают за всё
+    set_levelup()
+	local bleedingCure = 0
+----Выживальщик-3. Кибермедик -- восстановление кровопотери 10% + 0.75% за уровень -------------> Second Wind
+    if arpg_m.surv >= 1 and db.actor.power <= 0.15 then
+        -- db.actor.power = db.actor.power + (0.05 + (0.0075 * arpg_m.surv))
+		local secondWind = (0.05 + (0.0075 * arpg_m.surv))
+		db.actor:change_power(secondWind)
+    end
+    if arpg_m.surv >= skill_req(3) then -------------------------------------> Cyber-medic
+        bleedingCure = 0.00001 + ((arpg_m.surv - skill_req(3)) * 0.00001)
+		--db.actor.bleeding = db.actor.bleeding + bleedingCure
+    end
+----[CHANGE] Arty Recharge now unlocked when unlocking the final Looter skill; Recharge now a constant (now recharges at +.01% per second)
+	if arpg_m.mrdr >= skill_req(7) then 
+		local artyBonus = 0.0001
+		db.actor:iterate_belt( function(owner, obj)
+			local condition = obj:condition()
+			local newCondition = condition + artyBonus
+			-- [EXPERIMENTAL] OVERCHARGE Artefacts/Belt Attachments
+			if newCondition < 0.99 then
+				obj:set_condition(condition + artyBonus)
+			end
+		end)
+	end
+
+------Броненосец-7. Иммунитет к долгоиграющим эффектам -------------------> Refreshness
+    if arpg_m.armor >= skill_req(7) then
+		--local bleedingRemoval = 0.00135
+		bleedingCure = bleedingCure + 0.00135
+		-- local radRemoval = -0.00012
+		-- db.actor:change_radiation(radRemoval)
+		local dizzyRemoval = -0.0005
+		db.actor.alcohol = dizzyRemoval
+		--db.actor.bleeding = bleedingRemoval
+    end
+------Выводим смс о притоке ранга
+    local new_rank = db.actor:character_rank()
+    if new_rank > old_rank then
+        --local text = gt("rpg_1") .. " " .. (new_rank - old_rank) .. " " .. gt("rpg_2")
+        --sms(1, text, 5) -- сообщение чуть повыше
+        old_rank = new_rank
+    end
+	
+	if bleedingCure > 0 then
+		db.actor.bleeding = bleedingCure
+	end
+end
+----------------------------------------------------------------------------------------------
+function der_npc_cleaner(victim)
+----Сталкер-2. Радар -- прячем отметки после использования
+    local id = victim:id()
+    level.map_remove_object_spot(id, "deadbody_location")
+    
+------Мародёрка-2. Автоматическая разрядка всех пушек. Autoloads ammo from looted body's weapons (already a thing in GAMMA)
+    --local function unload_gun(victim,item)
+        --if IsWeapon(item) then
+            --item:force_unload_magazine(true)
+        --end
+    --end
+
+------Мародёрка-1. Спавним больше патронов ----------------> Ammo Eater (additional ammo function)
+    local function more_ammo(victim, item)
+        if victim:alive() then return end
+        if IsAmmo(item) then
+            local bonus = 0.1 * arpg_m.mrdr
+            if (bonus > 0 and ini_sys:section_exist(item:section())) then
+                alife_create_item(item:section(), victim, {ammo = 1 + bonus})
+            end
+        end
+    end
+
+    if used_npc[id] then
+        return
+    else
+------Мародёр 1. Количество собираемых патронов -------------> Ammo Eater
+        if arpg_m.mrdr >= 1 then
+            victim:iterate_inventory(more_ammo, victim)
+            CreateTimeEvent(victim:id(), "npc_ammo_aggregation", 0, item_weapon.ammo_aggregation_full, victim:id())
+        end
+		
+		
+-------------------------------------------------------------> Plate Finder
+		if arpg_m.armor >= 1 then
+			local plateChance = (1 + math.floor(arpg_m.armor / 4)) >= math.random(100)
+			if plateChance then
+				alife_create_item("af_kevlar", victim, {cond = math.random(1,15) * 0.01})
+			end
+		end
+		
+-----------------------------------------------------------> Medicine Man (chance to find meds when looting) Looter 2
+		if arpg_m.mrdr >= skill_req(2) then
+			local looterLevel = arpg_m.mrdr - skill_req(2) + 1
+			try_spawn_meds(victim, looterLevel)
+			if arpg_m.mrdr >= skill_req(7) then
+				looterLevel = 1
+				try_spawn_meds(victim, looterLevel)
+			end
+		end
+	
+----Мародёрка-7: шанс на наводку на тайник ------------------> Stash Finder
+        if arpg_m.mrdr >= skill_req(7) then
+            local dice = math.random(100) < 25
+            if dice then
+                treasure_manager.create_random_stash()
+            end
+        end
+		------------------------------------------------------------> Rough Draft for Artefinder to spawn Artefacts (allowed within the area) on killed NPCs (use of drx_da_main_artefacts to get an area's aretfacts)
+		------------------------------------------------------------> Translates to 1% + 0.5% per Looter Level after obtaining this perk
+		if arpg_m.mrdr >= skill_req(3) then
+			local artyChance = 10 + (5 * (arpg_m.mrdr - skill_req(3)))
+			local artyDrop = math.random(1000) <= artyChance
+			if artyDrop then
+				local allowed_artefacts = drx_da_main_artefacts.allowed_artefacts
+				alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim)
+				if arpg_m.mrdr >= skill_req(7) then		------------------------------------------> When final Looter skill is unlocked, an additional roll for an artefact is unlocked (flat 5% chance)
+					artyDrop = math.random(100) <= 1
+					if artyDrop then
+						alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim)
+					end
+				end
+			end
+		end
+    end
+    used_npc[victim:id()] = true
+end
+----------------------------------------------------------------------------------------------
+function actor_on_weapon_before_fire()
+----Механик-6: Оружие изнашивается медленнее ---------------> Barrel Cleaner (condition gain on firing weapon)
+    local weapon = get_locals()
+	if not weapon then return end
+	local weaponFired = get_locals("weapon")
+    local health = get_locals("health")
+	local cleanerChance = math.random(100) <= 15
+    if arpg_m.tech >= skill_req(6) and cleanerChance then
+        --heal_bonus = 0.0005 * (arpg_m.tech - skill_req(6))
+        --weaponFired:set_condition(health + heal_bonus)
+		local saved_parts = item_parts.get_parts_con(weaponFired) or 0
+		if saved_parts ~= 0 then
+			heal_bonus = 1 + math.floor((arpg_m.tech - skill_req(6)) / 2)
+			for k,v in pairs(saved_parts) do
+				if arti_jamming.is_barrel(saved_parts[k]) then
+					saved_parts[k] = v + heal_bonus
+				end
+			end
+		end
+    end
+	
+end
+----------------------------------------------------------------------------------------------
+function actor_on_item_use(item,string)
+    if not item then return end
+    local sec = item:section()
+	local itemType = SYS_GetParam(0, sec, "kind")
+----Выживальщик-6. Аптечки действуют дольше ----------------> Skilled Medic
+
+    if arpg_m.surv >= skill_req(6) and itemType == "i_medical" then
+		local chance = 1 + (arpg_m.surv - skill_req(6))/2
+		if math.random(100) <= chance then
+			create_item_random_uses(sec, db.actor)
+		end
+	end
+	
+	
+----Выживальщик-7. Любое неалкогольное питьё восстанавливает здоровье ------------> Comfort Food: Health from food/drink based on either thirst or satiety restore
+    if arpg_m.surv >= skill_req(7) and (itemType == "i_food" or itemType == "i_drink") then
+        local drink = ini_sys:r_float_ex(sec, "eat_thirstiness") or 0
+		drink = drink * (-1)
+		local food = ini_sys:r_float_ex(sec, "eat_satiety") or 0
+		local isDrink = drink > 0
+		local isFood = food > 0
+        if isDrink and isFood then
+			if (drink > food) or (drink == food) then
+				db.actor:change_health(drink/100)
+			else db.actor:change_health(food/100)
+			end
+		elseif isDrink then
+			db.actor:change_health(drink/100)
+		elseif isFood then
+			db.actor:change_health(food/100)
+        end
+    end
+end
+----------------------------------------------------------------------------------------------
+-----------------------------------СЕКЦИЯ ТЕХНИЧЕСКАЯ-----------------------------------------
+----------------------------------------------------------------------------------------------
+if (bhs_patch == "bhs_fixed") then
+----Лечим беды с регеном/вампиризмом с Body Health System
+    local bhs_Ne_boley = zzz_player_injuries.actor_on_update or nil
+    function isonup()
+        function recieved_damage()
+            return true
+        end
+        bhs_Ne_boley()
+    end
+    zzz_player_injuries.actor_on_update = isonup
+end
+----------------------------------------------------------------------------------------------
+function der_mon_cleaner(victim)
+----Сталкер-2. Радар -- прячем отметки после использования
+    local id = victim:id()
+    level.map_remove_object_spot(id, "tushka_location")
+end
+----------------------------------------------------------------------------------------------
+function save_state(m_data)
+    m_data.arpg_m                   = arpg_m
+    m_data.arpg_h                   = arpg_h
+    m_data.used_npc                 = used_npc
+    m_data.old_rank                 = old_rank
+end
+----------------------------------------------------------------------------------------------
+function load_state(m_data)
+    if m_data.arpg_m               then arpg_m               = m_data.arpg_m               end
+    if m_data.arpg_h               then arpg_h               = m_data.arpg_h               end
+    if m_data.used_npc             then used_npc             = m_data.used_npc             end
+    if m_data.old_rank             then old_rank             = m_data.old_rank             end
+	end
+------------------Отображение уровня прокачки оружия--------------------------------------------------
+original_build_desc_header = ui_item.build_desc_header
+function ui_item.build_desc_header(obj, sec, str)
+    local _str = ""
+    local _str2 = original_build_desc_header(obj, sec, str)
+    if obj and IsWeapon(obj) and not IsAmmo(obj) then
+        local sort = sortK_of(obj)
+        local gun_level = arpg_m[sort]
+        if not gun_level then return end
+		if sort == "smg" then
+			_str = gt("ui_mcm_menu_arpg") .. " " .. gt("rpg_lvl") .. ": " .. gun_level .. " (SMG/Pistol)\\n"
+		elseif sort == "rifle" then
+			_str = gt("ui_mcm_menu_arpg") .. " " .. gt("rpg_lvl") .. ": " .. gun_level .. " (Rifles)\\n"
+		elseif sort == "sgun" then
+			_str = gt("ui_mcm_menu_arpg") .. " " .. gt("rpg_lvl") .. ": " .. gun_level .. " (Special/Heavy)\\n"
+		end
+--        if gun_level >= 1 then
+--           _str = _str .. "1: " .. gt("rpg_stat_1") .. "\\n"
+--        end
+--        if gun_level >= skill_req(2) then
+--            local dmg_mult = (gun_level - 1) * mod_dmg * 10
+--            if arpg_m.surv >= skill_req(2) then dmg_mult = dmg_mult * 1.05 end
+--            _str = _str .. "2: " .. gt("rpg_stat_2") .. "(+" .. dmg_mult * 10 .. "%"
+--            if arpg_m.stlk >= skill_req(7) then
+--                _str = _str .. "+ Extra damage " .. gt("rpg_stat_21") .. ")" .. "\\n"
+--            else
+--                _str = _str .. ")\\n"
+--            end
+--        end
+--        if gun_level >= skill_req(3) then
+--            _str = _str .. "3: " .. gt("rpg_stat_3") .. "\\n"
+--        end
+--        if gun_level >= skill_req(4) then
+--            _str = _str .. "4: " .. gt("rpg_stat_4") .. "\\n"
+--        end
+--        if gun_level >= skill_req(5) then
+--            _str = _str .. "5: " .. gt("rpg_stat_5") .. "\\n"
+--        end
+--        if gun_level >= skill_req(6) then
+--            _str = _str .. c_table[1] .. "6: " .. gt("rpg_stat_6") .. " " ..  c_table[12] .. gt("rpg_stat_62") .. "\\n"
+--        end
+--        if gun_level >= skill_req(7) then
+--            _str = _str .. c_table[1] .. "7: " .. gt("rpg_stat_7") .. " " .. c_table[12] .. gt("rpg_stat_72") .."\\n"
+--        end
+    end
+    _str = _str .. _str2
+    return _str
+end
+----------------------------------------------------------------------------------------------
+--------------------------------ОКНО САМОЙ ПРОКАЧКИ-------------------------------------------
+----------------------------------------------------------------------------------------------
+function keybind_pass()
+    if (K_Timer and (time_global() > K_Timer + 200)) or (not K_Timer) then
+        K_Timer = time_global()
+        return true
+    end
+    return false
+end
+----------------------------------------------------------------------------------------------
+function on_key_press(key)
+    if (key == DIK_keys.DIK_LSHIFT) or (key == DIK_keys.DIK_RSHIFT) then
+        is_shift_pressed = true
+    end
+end
+----------------------------------------------------------------------------------------------
+function on_key_release(key)
+    if (key == menu_key) and is_shift_pressed then
+        start()
+    end
+    if (key == menu_key2) and is_shift_pressed then	-- DEBUG
+		xr_sound.set_sound_play(AC_ID, "pda_task")
+        arpg_h.points = 100
+    end
+    if (key == DIK_keys.DIK_LSHIFT) or (key == DIK_keys.DIK_RSHIFT) then
+        is_shift_pressed = false
+    end
+end
+----------------------------------------------------------------------------------------------
+function start()
+    hide_hud_inventory()
+
+    if (not GUI) then
+        GUI = PerkSelector()
+    end
+
+    if (GUI) and (not GUI:IsShown()) and keybind_pass() then
+        GUI:Reset()
+        GUI:ShowDialog(true)
+        Register_UI("PerkSelector", "zzzzz_arpg_ui")
+		
+    end
+end
+----------------------------------------------------------------------------------------------
+class "PerkSelector" (CUIScriptWnd)
+----------------------------------------------------------------------------------------------
+function PerkSelector:__init() super()
+    self:InitControls()
+    self:InitCallBacks()
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:__finalize()
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:InitControls()
+    -- Файл вёрстки
+    self.xml                        = CScriptXmlInit()
+    local xml                        = self.xml
+    xml:ParseFile                   ("arpg_selector.xml")
+    -- Инициализация
+    self:SetWndRect                 (Frect():set(0,0,914,768))
+    self:SetAutoDelete              (true)
+    --Основное окно
+    --Подложка, внутри которой работает окно
+    self.dialog                     = xml:InitStatic("arpg_selector2", self)
+    self.dialog:InitTexture         ("ui_inGame2_opt_main_window")
+    self.dialog:SetStretchTexture   (true)
+    self.dialog                     = xml:InitStatic("arpg_selector", self)
+    self.dialog:InitTexture         ("ui_inGame2_opt_main_window")
+    self.dialog:SetStretchTexture   (true)
+    self.stlk_pts_bg                 = xml:InitStatic("arpg_selector:stlk_pts_bg", self.dialog)
+    self.stlk_pts_bg:InitTexture   ("arpg_pts_counter")
+    -- Заголовок и имя
+    self.title_arpg                 = xml:InitTextWnd("arpg_selector:title_arpg", self.dialog)
+    self.lvl_counter                  = xml:InitTextWnd("arpg_selector:lvl_counter", self.dialog)
+    self.stlk_pts_count              = xml:InitTextWnd("arpg_selector:stlk_pts_count", self.dialog)
+   
+	dmg_mod = math.floor(mod_dmg * 100)
+	local weapon = get_locals()
+	local class = 0
+	if weapon then
+		class = get_locals("sort")
+		if class == "smg" then class = arpg_m.smg
+		elseif class == "rifle" then class = arpg_m.rifle
+		elseif class == "sgun" then class = arpg_m.sgun
+		else class = 0
+		end
+	end
+   
+	self.skills = {
+		["smg_window"] = {},
+		["smg_bonus1"] = {},
+		["smg_bonus2"] = {},
+		["smg_bonus3"] = {},
+		["smg_bonus4"] = {},
+		["smg_bonus5"] = {},
+		["smg_bonus6"] = {},
+		["smg_bonus7"] = {},
+		["rifle_window"] = {},
+		["rifle_bonus1"] = {},
+		["rifle_bonus2"] = {},
+		["rifle_bonus3"] = {},
+		["rifle_bonus4"] = {},
+		["rifle_bonus5"] = {},
+		["rifle_bonus6"] = {},
+		["rifle_bonus7"] = {},
+		["sgun_window"] = {},
+		["sgun_bonus1"] = {},
+		["sgun_bonus2"] = {},
+		["sgun_bonus3"] = {},
+		["sgun_bonus4"] = {},
+		["sgun_bonus5"] = {},
+		["sgun_bonus6"] = {},
+		["sgun_bonus7"] = {},
+		["tech_window"] = {},
+		["tech_bonus1"] = {},
+		["tech_bonus2"] = {},
+		["tech_bonus3"] = {},
+		["tech_bonus4"] = {},
+		["tech_bonus5"] = {},
+		["tech_bonus6"] = {},
+		["tech_bonus7"] = {},
+		["surv_window"] = {},
+		["surv_bonus1"] = {},
+		["surv_bonus2"] = {},
+		["surv_bonus3"] = {},
+		["surv_bonus4"] = {},
+		["surv_bonus5"] = {},
+		["surv_bonus6"] = {},
+		["surv_bonus7"] = {},
+		["mrdr_window"] = {},
+		["mrdr_bonus1"] = {},
+		["mrdr_bonus2"] = {},
+		["mrdr_bonus3"] = {},
+		["mrdr_bonus4"] = {},
+		["mrdr_bonus5"] = {},
+		["mrdr_bonus6"] = {},
+		["mrdr_bonus7"] = {},
+		["armor_window"] = {},
+		["armor_bonus1"] = {},
+		["armor_bonus2"] = {},
+		["armor_bonus3"] = {},
+		["armor_bonus4"] = {},
+		["armor_bonus5"] = {},
+		["armor_bonus6"] = {},
+		["armor_bonus7"] = {},
+		["stlk_window"] = {},
+		["stlk_bonus1"] = {},
+		["stlk_bonus2"] = {},
+		["stlk_bonus3"] = {},
+		["stlk_bonus4"] = {},
+		["stlk_bonus5"] = {},
+		["stlk_bonus6"] = {},
+		["stlk_bonus7"] = {},
+	}
+	--1.Мастерство малого калибра. Всё бы это циклом по-хорошему...
+    --Окно-стат
+	
+    self.skills["smg_window"].icon = xml:InitStatic("arpg_selector:smg_window", self)
+    self.skills["smg_window"].icon:InitTexture("arpg_skill_smg")
+	self.skills["smg_window"].description = parse_keys( gt("ui_arpg_hint_smg_tree"), {["stat"] = arpg_m.smg})
+	self.skills["smg_bonus7"].icon = xml:InitStatic("arpg_selector:smg_bonus7", self)
+	self.skills["smg_bonus7"].description = parse_keys( gt("ui_arpg_hint_disarming_shot"), {["stat"] = 5 + (arpg_m.smg - skill_req(7))})
+    self.skills["smg_bonus6"].icon = xml:InitStatic("arpg_selector:smg_bonus6", self)
+	self.skills["smg_bonus6"].description =  parse_keys( gt("ui_arpg_hint_armor_breaker"), {["stat"] = 5 + (arpg_m.smg - skill_req(6))})
+    self.skills["smg_bonus5"].icon = xml:InitStatic("arpg_selector:smg_bonus5", self)
+	self.skills["smg_bonus5"].description = gt("ui_arpg_hint_bloody_mess")
+    self.skills["smg_bonus4"].icon = xml:InitStatic("arpg_selector:smg_bonus4", self)
+	self.skills["smg_bonus4"].description =  parse_keys( gt("ui_arpg_hint_headhunter"), {["stat"] = 20 + 20 * (arpg_m.smg - skill_req(4))})
+    self.skills["smg_bonus3"].icon = xml:InitStatic("arpg_selector:smg_bonus3", self)
+	self.skills["smg_bonus3"].description = gt("ui_arpg_hint_disabling_shot")
+    self.skills["smg_bonus2"].icon = xml:InitStatic("arpg_selector:smg_bonus2", self)
+ 	self.skills["smg_bonus2"].description = parse_keys( gt("ui_arpg_hint_heavy_shot_1"), {["stat"] = dmg_mod})
+	self.skills["smg_bonus1"].icon = xml:InitStatic("arpg_selector:smg_bonus1", self)
+	self.skills["smg_bonus1"].description = parse_keys( gt("ui_arpg_hint_ghost_ammo"), {["stat"] = 0.5 + (0.1 * (arpg_m.smg - skill_req(1)))})
+	
+    self.smg_frame                  = xml:InitStatic("arpg_selector:smg_frame", self)
+    self.smg_frame:InitTexture      ("arpg_frame_up_l")
+    self.smg_cost                   = xml:InitTextWnd("arpg_selector:smg_cost", self.dialog)
+    
+    self.smg_activator              = xml:Init3tButton("arpg_selector:smg_activator",self.dialog)
+    self.smg_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.smg_activator, "smg_activator")
+	
+    --2.Мастерство калибров покрупнее
+
+	self.skills["rifle_window"].icon = xml:InitStatic("arpg_selector:rifle_window", self)
+    self.skills["rifle_window"].icon:InitTexture("arpg_skill_rifle")
+	self.skills["rifle_window"].description = parse_keys( gt("ui_arpg_hint_ar_tree"), {["stat"] = arpg_m.rifle})
+	self.skills["rifle_bonus7"].icon = xml:InitStatic("arpg_selector:rifle_bonus7", self)
+	self.skills["rifle_bonus7"].description = parse_keys( gt("ui_arpg_hint_disarming_shot"), {["stat"] = 5 + (arpg_m.rifle - skill_req(7))})
+    self.skills["rifle_bonus6"].icon = xml:InitStatic("arpg_selector:rifle_bonus6", self)
+	self.skills["rifle_bonus6"].description = parse_keys( gt("ui_arpg_hint_armor_breaker"), {["stat"] = 5 + (arpg_m.rifle - skill_req(6))})
+    self.skills["rifle_bonus5"].icon = xml:InitStatic("arpg_selector:rifle_bonus5", self)
+	self.skills["rifle_bonus5"].description = parse_keys( gt("ui_arpg_hint_heavy_shot_2"), {["stat"] = dmg_mod})
+    self.skills["rifle_bonus4"].icon = xml:InitStatic("arpg_selector:rifle_bonus4", self)
+	self.skills["rifle_bonus4"].description = parse_keys( gt("ui_arpg_hint_headhunter"), {["stat"] = 20 + 20 * (arpg_m.rifle - skill_req(4))})
+    self.skills["rifle_bonus3"].icon = xml:InitStatic("arpg_selector:rifle_bonus3", self)
+	self.skills["rifle_bonus3"].description = gt("ui_arpg_hint_crippling_shot")
+    self.skills["rifle_bonus2"].icon = xml:InitStatic("arpg_selector:rifle_bonus2", self)
+	self.skills["rifle_bonus2"].description = parse_keys( gt("ui_arpg_hint_heavy_shot_1"), {["stat"] = dmg_mod})
+    self.skills["rifle_bonus1"].icon = xml:InitStatic("arpg_selector:rifle_bonus1", self)
+	self.skills["rifle_bonus1"].description = parse_keys( gt("ui_arpg_hint_ghost_ammo"), {["stat"] = 0.5 + (0.1 * (arpg_m.rifle - skill_req(1)))})
+
+    self.rifle_frame                  = xml:InitStatic("arpg_selector:rifle_frame", self)
+    self.rifle_frame:InitTexture      ("arpg_frame_up_l")
+    self.rifle_cost                   = xml:InitTextWnd("arpg_selector:rifle_cost", self.dialog)
+
+    self.rifle_activator              = xml:Init3tButton("arpg_selector:rifle_activator",self.dialog)
+    self.rifle_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.rifle_activator, "rifle_activator")
+	
+    --3.Мастерство дробовика
+    
+	self.skills["sgun_window"].icon = xml:InitStatic("arpg_selector:sgun_window", self)
+    self.skills["sgun_window"].icon:InitTexture("arpg_skill_sgun")
+    self.skills["sgun_window"].description = parse_keys( gt("ui_arpg_hint_special_tree"), {["stat"] = arpg_m.sgun})
+	self.skills["sgun_bonus7"].icon = xml:InitStatic("arpg_selector:sgun_bonus7", self)
+	self.skills["sgun_bonus7"].description = parse_keys( gt("ui_arpg_hint_disarming_shot"), {["stat"] = 5 + (arpg_m.sgun - skill_req(7))})
+    self.skills["sgun_bonus6"].icon = xml:InitStatic("arpg_selector:sgun_bonus6", self)
+    self.skills["sgun_bonus6"].description = parse_keys( gt("ui_arpg_hint_armor_breaker"), {["stat"] = 5 + (arpg_m.sgun - skill_req(6))})
+    self.skills["sgun_bonus5"].icon = xml:InitStatic("arpg_selector:sgun_bonus5", self)
+    self.skills["sgun_bonus5"].description = gt("ui_arpg_hint_bloody_mess_special")
+    self.skills["sgun_bonus4"].icon = xml:InitStatic("arpg_selector:sgun_bonus4", self)
+    self.skills["sgun_bonus4"].description = parse_keys( gt("ui_arpg_hint_heavy_shot_3"), {["stat"] = dmg_mod})
+    self.skills["sgun_bonus3"].icon = xml:InitStatic("arpg_selector:sgun_bonus3", self)
+    self.skills["sgun_bonus3"].description = parse_keys( gt("ui_arpg_hint_heavy_shot_2"), {["stat"] = dmg_mod})
+    self.skills["sgun_bonus2"].icon = xml:InitStatic("arpg_selector:sgun_bonus2", self)
+    self.skills["sgun_bonus2"].description = parse_keys( gt("ui_arpg_hint_heavy_shot_1"), {["stat"] = dmg_mod})
+    self.skills["sgun_bonus1"].icon = xml:InitStatic("arpg_selector:sgun_bonus1", self)
+    self.skills["sgun_bonus1"].description = parse_keys( gt("ui_arpg_hint_ghost_ammo"), {["stat"] = 0.5 + (0.1 * (arpg_m.sgun - skill_req(1)))})
+	
+    self.sgun_frame                  = xml:InitStatic("arpg_selector:sgun_frame", self)
+    self.sgun_frame:InitTexture      ("arpg_frame_up_l")
+    self.sgun_cost                   = xml:InitTextWnd("arpg_selector:sgun_cost", self.dialog)
+    
+    self.sgun_activator              = xml:Init3tButton("arpg_selector:sgun_activator",self.dialog)
+    self.sgun_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.sgun_activator, "sgun_activator")
+	
+    --4.Мастерство механика
+	
+	self.skills["tech_window"].icon = xml:InitStatic("arpg_selector:tech_window", self)
+    self.skills["tech_window"].icon:InitTexture("arpg_skill_tech")
+    self.skills["tech_window"].description = gt("ui_arpg_hint_tech_tree")
+	self.skills["tech_bonus7"].icon = xml:InitStatic("arpg_selector:tech_bonus7", self)
+    self.skills["tech_bonus7"].description = parse_keys( gt("ui_arpg_hint_good_riddance"), {["stat"] = 1 + (arpg_m.tech - skill_req(7))})
+    self.skills["tech_bonus6"].icon = xml:InitStatic("arpg_selector:tech_bonus6", self)
+    self.skills["tech_bonus6"].description =  parse_keys( gt("ui_arpg_hint_barrel_cleaner"), {["stat"] = 1 + math.floor((arpg_m.tech - skill_req(6)) * 0.5)})
+    self.skills["tech_bonus5"].icon = xml:InitStatic("arpg_selector:tech_bonus5", self)
+    self.skills["tech_bonus5"].description =  parse_keys( gt("ui_arpg_hint_armor_repair"), {["stat"] = 0.5 + (0.025 * arpg_m.armor)})
+    self.skills["tech_bonus4"].icon = xml:InitStatic("arpg_selector:tech_bonus4", self)
+    self.skills["tech_bonus4"].description = parse_keys( gt("ui_arpg_hint_jam_repair"), {["stat"] = 5 + (arpg_m.tech - skill_req(4))})
+    self.skills["tech_bonus3"].icon = xml:InitStatic("arpg_selector:tech_bonus3", self)
+    self.skills["tech_bonus3"].description = parse_keys( gt("ui_arpg_hint_weapon_repair"), {["stat"] = 0.5 + (0.025 * class), ["number"] = 1 + math.floor(class * 0.5)})
+    self.skills["tech_bonus2"].icon = xml:InitStatic("arpg_selector:tech_bonus2", self)
+    self.skills["tech_bonus2"].description = parse_keys( gt("ui_arpg_hint_helmet_repair"), {["stat"] = 0.5 + (0.025 * arpg_m.surv)})
+    self.skills["tech_bonus1"].icon = xml:InitStatic("arpg_selector:tech_bonus1", self)
+    self.skills["tech_bonus1"].description = parse_keys( gt("ui_arpg_hint_carfeul_handler"), {["stat"] = 0.5 + (0.025 * (arpg_m.tech - skill_req(1)))})
+    
+    self.tech_frame                  = xml:InitStatic("arpg_selector:tech_frame", self)
+    self.tech_frame:InitTexture      ("arpg_frame_up_r")
+    self.tech_cost                   = xml:InitTextWnd("arpg_selector:tech_cost", self.dialog)
+    
+    self.tech_activator              = xml:Init3tButton("arpg_selector:tech_activator",self.dialog)
+    self.tech_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.tech_activator, "tech_activator")
+	
+    --5.Мастерство выживальщика
+    
+	self.skills["surv_window"].icon = xml:InitStatic("arpg_selector:surv_window", self)
+    self.skills["surv_window"].icon:InitTexture("arpg_skill_surv")
+    self.skills["surv_window"].description = parse_keys( gt("ui_arpg_hint_survival_tree"), {["stat"] = arpg_m.surv * 0.25})
+	self.skills["surv_bonus7"].icon = xml:InitStatic("arpg_selector:surv_bonus7", self)
+    self.skills["surv_bonus7"].description = gt("ui_arpg_hint_comfort_food")
+    self.skills["surv_bonus6"].icon = xml:InitStatic("arpg_selector:surv_bonus6", self)
+    self.skills["surv_bonus6"].description = parse_keys( gt("ui_arpg_hint_skilled_doctor"), {["stat"] = 1 + math.floor(((arpg_m.surv - skill_req(6))) * 0.5)})
+    self.skills["surv_bonus5"].icon = xml:InitStatic("arpg_selector:surv_bonus5", self)
+    self.skills["surv_bonus5"].description = gt("ui_arpg_hint_ignorance_surv")
+    self.skills["surv_bonus4"].icon = xml:InitStatic("arpg_selector:surv_bonus4", self)
+    self.skills["surv_bonus4"].description = gt("ui_arpg_hint_dodger_surv")
+    self.skills["surv_bonus3"].icon = xml:InitStatic("arpg_selector:surv_bonus3", self)
+    self.skills["surv_bonus3"].description = parse_keys( gt("ui_arpg_hint_cyber_medic"),  {["stat"] =  0.00001 + ((arpg_m.surv - skill_req(3)) * 0.00001)})
+    self.skills["surv_bonus2"].icon = xml:InitStatic("arpg_selector:surv_bonus2", self)
+    self.skills["surv_bonus2"].description = gt("ui_arpg_hint_bullseye")
+    self.skills["surv_bonus1"].icon = xml:InitStatic("arpg_selector:surv_bonus1", self)
+    self.skills["surv_bonus1"].description = parse_keys( gt("ui_arpg_hint_second_wind"),  {["stat"] = 5 + (0.75 * (arpg_m.surv - skill_req(1)))})
+	
+    self.surv_frame                  = xml:InitStatic("arpg_selector:surv_frame", self)
+    self.surv_frame:InitTexture      ("arpg_frame_down_l")
+    self.surv_cost                   = xml:InitTextWnd("arpg_selector:surv_cost", self.dialog)
+    
+    self.surv_activator              = xml:Init3tButton("arpg_selector:surv_activator",self.dialog)
+    self.surv_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.surv_activator, "surv_activator")
+	
+    --6.Мастерство мародёра
+    
+	self.skills["mrdr_window"].icon = xml:InitStatic("arpg_selector:mrdr_window", self)
+    self.skills["mrdr_window"].icon:InitTexture("arpg_skill_mrdr")
+    self.skills["mrdr_window"].description = gt("ui_arpg_hint_looter_tree")
+	self.skills["mrdr_bonus7"].icon = xml:InitStatic("arpg_selector:mrdr_bonus7", self)
+    self.skills["mrdr_bonus7"].description =  gt("ui_arpg_hint_master_thief")
+    self.skills["mrdr_bonus6"].icon = xml:InitStatic("arpg_selector:mrdr_bonus6", self)
+    self.skills["mrdr_bonus6"].description =  parse_keys( gt("ui_arpg_hint_beggar"), {["stat"] = 5 + (arpg_m.mrdr - skill_req(6))})
+    self.skills["mrdr_bonus5"].icon = xml:InitStatic("arpg_selector:mrdr_bonus5", self)
+    self.skills["mrdr_bonus5"].description =  parse_keys( gt("ui_arpg_hint_outfit_loot"), {["stat"] = 10 + ( arpg_m.armor * 0.5) })
+    self.skills["mrdr_bonus4"].icon = xml:InitStatic("arpg_selector:mrdr_bonus4", self)
+    self.skills["mrdr_bonus4"].description =  parse_keys( gt("ui_arpg_hint_weapon_loot"), {["stat"] = 10 + ( class * 0.5) })
+    self.skills["mrdr_bonus3"].icon = xml:InitStatic("arpg_selector:mrdr_bonus3", self)
+    self.skills["mrdr_bonus3"].description =  parse_keys( gt("ui_arpg_hint_artefinder"), {["stat"] = 1 + (0.5 * (arpg_m.mrdr - skill_req(3))), ["number"] = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3)), ["boost"] = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))})
+    self.skills["mrdr_bonus2"].icon = xml:InitStatic("arpg_selector:mrdr_bonus2", self)
+    self.skills["mrdr_bonus2"].description = parse_keys( gt("ui_arpg_hint_medicine_man"), {["stat"] = 1 + (arpg_m.mrdr - skill_req(2))})
+    self.skills["mrdr_bonus1"].icon = xml:InitStatic("arpg_selector:mrdr_bonus1", self)
+    self.skills["mrdr_bonus1"].description = parse_keys( gt("ui_arpg_hint_ammo_eater"),  {["stat"] = 10 + (10 * (arpg_m.mrdr - skill_req(1)))})
+	
+    self.mrdr_frame                  = xml:InitStatic("arpg_selector:mrdr_frame", self)
+    self.mrdr_frame:InitTexture      ("arpg_frame_down_l")
+    self.mrdr_cost                   = xml:InitTextWnd("arpg_selector:mrdr_cost", self.dialog)
+    
+    self.mrdr_activator              = xml:Init3tButton("arpg_selector:mrdr_activator",self.dialog)
+    self.mrdr_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.mrdr_activator, "mrdr_activator")
+	
+    --7.Мастерство броненосца
+	
+    self.skills["armor_window"].icon = xml:InitStatic("arpg_selector:armor_window", self)
+    self.skills["armor_window"].icon:InitTexture("arpg_skill_armor")
+    self.skills["armor_window"].description = gt("ui_arpg_hint_armorer_tree")
+	self.skills["armor_bonus7"].icon = xml:InitStatic("arpg_selector:armor_bonus7", self)
+    self.skills["armor_bonus7"].description = gt("ui_arpg_hint_refreshness")
+    self.skills["armor_bonus6"].icon = xml:InitStatic("arpg_selector:armor_bonus6", self)
+    self.skills["armor_bonus6"].description = gt("ui_arpg_hint_dodger_armor")
+    self.skills["armor_bonus5"].icon = xml:InitStatic("arpg_selector:armor_bonus5", self)
+    self.skills["armor_bonus5"].description = parse_keys( gt("ui_arpg_hint_anomalous_materials"), {["stat"] = 1 + 0.25 * (arpg_m.armor - skill_req(5))})
+    self.skills["armor_bonus4"].icon = xml:InitStatic("arpg_selector:armor_bonus4", self)
+    self.skills["armor_bonus4"].description = parse_keys( gt("ui_arpg_hint_spiked"), {["stat"] = 1 + 0.25 * (arpg_m.armor - skill_req(4))})
+    self.skills["armor_bonus3"].icon = xml:InitStatic("arpg_selector:armor_bonus3", self)
+    self.skills["armor_bonus3"].description = gt("ui_arpg_hint_ignorance_armor")
+    self.skills["armor_bonus2"].icon = xml:InitStatic("arpg_selector:armor_bonus2", self)
+    self.skills["armor_bonus2"].description = parse_keys( gt("ui_arpg_hint_traditional_kevlar"), {["stat"] = 0.05 + 0.01 * (arpg_m.armor - skill_req(2))})
+    self.skills["armor_bonus1"].icon = xml:InitStatic("arpg_selector:armor_bonus1", self)
+    self.skills["armor_bonus1"].description = parse_keys( gt("ui_arpg_hint_plate_finder"),  {["stat"] = 1 + math.floor(((arpg_m.armor - skill_req(1))) * 0.25)})
+	
+    self.armor_frame                  = xml:InitStatic("arpg_selector:armor_frame", self)
+    self.armor_frame:InitTexture      ("arpg_frame_down_l")
+    self.armor_cost                   = xml:InitTextWnd("arpg_selector:armor_cost", self.dialog)
+    
+    self.armor_activator              = xml:Init3tButton("arpg_selector:armor_activator",self.dialog)
+    self.armor_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.armor_activator, "armor_activator")
+	
+    --8.Мастерство сталкера
+	
+	self.skills["stlk_window"].icon = xml:InitStatic("arpg_selector:stlk_window", self)
+    self.skills["stlk_window"].icon:InitTexture("arpg_skill_stlk")
+    self.skills["stlk_window"].description = gt("ui_arpg_hint_stalker_tree")
+	self.skills["stlk_bonus7"].icon = xml:InitStatic("arpg_selector:stlk_bonus7", self)
+    self.skills["stlk_bonus7"].description = parse_keys( gt("ui_arpg_hint_necromancer"), {["stat"] = 0.01 + 0.01 * (arpg_m.stlk - skill_req(7))})
+    self.skills["stlk_bonus6"].icon = xml:InitStatic("arpg_selector:stlk_bonus6", self)
+    self.skills["stlk_bonus6"].description = gt("ui_arpg_hint_warlock")
+    self.skills["stlk_bonus5"].icon = xml:InitStatic("arpg_selector:stlk_bonus5", self)
+    self.skills["stlk_bonus5"].description = gt("ui_arpg_hint_vampirism")
+    self.skills["stlk_bonus4"].icon = xml:InitStatic("arpg_selector:stlk_bonus4", self)
+    self.skills["stlk_bonus4"].description = parse_keys( gt("ui_arpg_hint_runner"), {["stat"] = 0.005 + 0.001 * (arpg_m.stlk - skill_req(4))})
+    self.skills["stlk_bonus3"].icon = xml:InitStatic("arpg_selector:stlk_bonus3", self)
+    self.skills["stlk_bonus3"].description = parse_keys( gt("ui_arpg_hint_rad_reload"), {["stat"] = 1 + (arpg_m.stlk - skill_req(3))})
+    self.skills["stlk_bonus2"].icon = xml:InitStatic("arpg_selector:stlk_bonus2", self)
+    self.skills["stlk_bonus2"].description = gt("ui_arpg_hint_recon")
+    self.skills["stlk_bonus1"].icon = xml:InitStatic("arpg_selector:stlk_bonus1", self)
+    self.skills["stlk_bonus1"].description = parse_keys( gt("ui_arpg_hint_xmark"), {["stat"] = arpg_m.stlk * 0.33})
+    
+    self.stlk_frame                  = xml:InitStatic("arpg_selector:stlk_frame", self)
+    self.stlk_frame:InitTexture      ("arpg_frame_down_r")
+    self.stlk_cost                   = xml:InitTextWnd("arpg_selector:stlk_cost", self.dialog)
+    
+    self.stlk_activator              = xml:Init3tButton("arpg_selector:stlk_activator",self.dialog)
+    self.stlk_activator:InitTexture  ("arpg_activator")
+    self:Register                   (self.stlk_activator, "stlk_activator")
+	
+    --Счётчик очков и подложка
+    self.perk_reset              = xml:Init3tButton("arpg_selector:perk_reset",self)
+    self:Register               (self.perk_reset, "perk_reset_button")
+    --Окошко подтверждения
+    self.message_box            = CUIMessageBoxEx()
+    self:Register               (self.message_box,"message_box")
+	
+	self.hint_wnd = utils_ui.UIHint(self)
+end
+---------------------------------------------------------------------------------------------
+function PerkSelector:Update()
+	CUIScriptWnd.Update(self)
+	
+	-- Show hint on hover
+	for skill, v in pairs(self.skills) do
+		if self.skills[skill].icon:IsCursorOverWindow() then
+			self.hint_wnd:Update(self.skills[skill].description)
+			return
+		end
+	end
+	
+	self.hint_wnd:Update()
+end
+	
+----------------------------------------------------------------------------------------------
+function PerkSelector:InitCallBacks()
+    self:AddCallback            ("smg_activator", ui_events.BUTTON_CLICKED, self.MasteryM, self)
+    self:AddCallback            ("rifle_activator", ui_events.BUTTON_CLICKED, self.MasteryRifle, self)
+    self:AddCallback            ("sgun_activator", ui_events.BUTTON_CLICKED, self.Masterysgun, self)
+    self:AddCallback            ("tech_activator", ui_events.BUTTON_CLICKED,self.Masterytech, self)
+    self:AddCallback            ("surv_activator", ui_events.BUTTON_CLICKED, self.Masterysurv, self)
+    self:AddCallback            ("mrdr_activator", ui_events.BUTTON_CLICKED, self.Masterymrdr, self)
+    self:AddCallback            ("armor_activator", ui_events.BUTTON_CLICKED, self.MasteryArmor, self)
+    self:AddCallback            ("stlk_activator", ui_events.BUTTON_CLICKED, self.Masterystlk, self)
+    self:AddCallback("perk_reset_button", ui_events.BUTTON_CLICKED, self.ConfirmReset, self)
+    self:AddCallback("perk_reset_button", ui_events.BUTTON_CLICKED, self.ConfirmReset, self)
+    self:AddCallback("message_box", ui_events.MESSAGE_BOX_YES_CLICKED, self.FullReset, self)
+    self:AddCallback("message_box", ui_events.MESSAGE_BOX_OK_CLICKED, self.FullReset, self)
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:ConfirmReset()
+    self.msgbox_id                      = 2
+    self.message_box:InitMessageBox     ("message_box_confirm_load_save")
+    self.message_box:SetText            ("ui_arpg_reset")
+    self.message_box:ShowDialog         (true)
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:FullReset()
+    if arpg_h.level >= 1 then
+        for perk, stats in pairs(arpg_m) do
+            arpg_m[perk] = 0
+        end
+        arpg_h.points = arpg_h.level - 1
+    else
+        printf('Ooopsies, nothing to reset')
+    end
+    self:Reset()
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:MasteryM()
+    self:MasteryUp("smg")
+end
+function PerkSelector:Masterysgun()
+    self:MasteryUp("sgun")
+end
+function PerkSelector:MasteryRifle()
+    self:MasteryUp("rifle")
+end
+function PerkSelector:Masterytech()
+    self:MasteryUp("tech")
+end
+function PerkSelector:Masterysurv()
+    self:MasteryUp("surv")
+end
+function PerkSelector:Masterymrdr()
+    self:MasteryUp("mrdr")
+end
+function PerkSelector:MasteryArmor()
+    self:MasteryUp("armor")
+end
+function PerkSelector:Masterystlk()
+    self:MasteryUp("stlk")
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:MasteryUp(kind)
+    if not kind then return end
+    arpg_m[kind]  = arpg_m[kind] + 1
+    arpg_h.points = arpg_h.points - 1
+    self:Reset()
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:Reset()
+    local progression = db.actor:character_rank()
+    if arpg_h.level > 1 then
+        self.perk_reset:Enable(true)
+    else
+        self.perk_reset:Enable(false)
+    end
+    self.title_arpg:SetText(gt("ui_mcm_menu_arpg") .. ":" .. db.actor:character_name() .. "(" .. arpg_h.level .. ")")
+    self.lvl_counter:SetText(gt("pda_arpg") .. progression .. " / " .. req_increment())
+    --Таблица требований: 1, 3, 8, 14, 23, 32, 44
+    self.smg_cost:SetText(arpg_m.smg)
+    self.rifle_cost:SetText(arpg_m.rifle)
+    self.sgun_cost:SetText(arpg_m.sgun)
+    self.tech_cost:SetText(arpg_m.tech)
+    self.surv_cost:SetText(arpg_m.surv)
+    self.mrdr_cost:SetText(arpg_m.mrdr)
+    self.armor_cost:SetText(arpg_m.armor)
+    self.stlk_cost:SetText(arpg_m.stlk)
+    if arpg_h.points >= 1 then
+        self.smg_activator:Enable(true)
+        self.sgun_activator:Enable(true)
+        self.rifle_activator:Enable(true)
+        self.tech_activator:Enable(true)
+        self.surv_activator:Enable(true)
+        self.mrdr_activator:Enable(true)
+        self.armor_activator:Enable(true)
+        self.stlk_activator:Enable(true)
+    else
+        self.smg_activator:Enable(false)
+        self.sgun_activator:Enable(false)
+        self.rifle_activator:Enable(false)
+        self.tech_activator:Enable(false)
+        self.surv_activator:Enable(false)
+        self.mrdr_activator:Enable(false)
+        self.armor_activator:Enable(false)
+        self.stlk_activator:Enable(false)
+    end
+    self.skills["smg_bonus7"].icon:InitTexture(arpg_m.smg >= skill_req(7) and "arpg_gun7" or "arpg_no_lu")
+    self.skills["smg_bonus6"].icon:InitTexture(arpg_m.smg >= skill_req(6) and "arpg_gun6" or "arpg_no_lu")
+    self.skills["smg_bonus5"].icon:InitTexture(arpg_m.smg >= skill_req(5) and "arpg_gun3" or "arpg_no_lu")
+    self.skills["smg_bonus4"].icon:InitTexture(arpg_m.smg >= skill_req(4) and "arpg_gun8" or "arpg_no_lu")
+    self.skills["smg_bonus3"].icon:InitTexture(arpg_m.smg >= skill_req(3) and "arpg_gun5" or "arpg_no_lu")
+    self.skills["smg_bonus2"].icon:InitTexture(arpg_m.smg >= skill_req(2) and "arpg_gun2" or "arpg_no_lu")
+    self.skills["smg_bonus1"].icon:InitTexture(arpg_m.smg >= skill_req(1) and "arpg_gun1" or "arpg_no_lu")
+    self.skills["rifle_bonus7"].icon:InitTexture(arpg_m.rifle >= skill_req(7) and "arpg_gun7" or "arpg_no_lu")
+    self.skills["rifle_bonus6"].icon:InitTexture(arpg_m.rifle >= skill_req(6) and "arpg_gun6" or "arpg_no_lu")
+    self.skills["rifle_bonus5"].icon:InitTexture(arpg_m.rifle >= skill_req(5) and "arpg_gun2" or "arpg_no_lu")
+    self.skills["rifle_bonus4"].icon:InitTexture(arpg_m.rifle >= skill_req(4) and "arpg_gun8" or "arpg_no_lu")
+    self.skills["rifle_bonus3"].icon:InitTexture(arpg_m.rifle >= skill_req(3) and "arpg_gun4" or "arpg_no_lu")
+    self.skills["rifle_bonus2"].icon:InitTexture(arpg_m.rifle >= skill_req(2) and "arpg_gun2" or "arpg_no_lu")
+    self.skills["rifle_bonus1"].icon:InitTexture(arpg_m.rifle >= skill_req(1) and "arpg_gun1" or "arpg_no_lu")
+    self.skills["sgun_bonus7"].icon:InitTexture(arpg_m.sgun >= skill_req(7) and "arpg_gun7" or "arpg_no_lu")
+    self.skills["sgun_bonus6"].icon:InitTexture(arpg_m.sgun >= skill_req(6) and "arpg_gun6" or "arpg_no_lu")
+    self.skills["sgun_bonus5"].icon:InitTexture(arpg_m.sgun >= skill_req(5) and "arpg_gun3" or "arpg_no_lu")
+    self.skills["sgun_bonus4"].icon:InitTexture(arpg_m.sgun >= skill_req(4) and "arpg_gun2" or "arpg_no_lu")
+    self.skills["sgun_bonus3"].icon:InitTexture(arpg_m.sgun >= skill_req(3) and "arpg_gun2" or "arpg_no_lu")
+    self.skills["sgun_bonus2"].icon:InitTexture(arpg_m.sgun >= skill_req(2) and "arpg_gun2" or "arpg_no_lu")
+    self.skills["sgun_bonus1"].icon:InitTexture(arpg_m.sgun >= skill_req(1) and "arpg_gun1" or "arpg_no_lu")
+    self.skills["tech_bonus7"].icon:InitTexture(arpg_m.tech >= skill_req(7) and "arpg_tech7" or "arpg_no_ru")
+    self.skills["tech_bonus6"].icon:InitTexture(arpg_m.tech >= skill_req(6) and "arpg_tech6" or "arpg_no_ru")
+    self.skills["tech_bonus5"].icon:InitTexture(arpg_m.tech >= skill_req(5) and "arpg_tech5" or "arpg_no_ru")
+    self.skills["tech_bonus4"].icon:InitTexture(arpg_m.tech >= skill_req(4) and "arpg_tech4" or "arpg_no_ru")
+    self.skills["tech_bonus3"].icon:InitTexture(arpg_m.tech >= skill_req(3) and "arpg_tech3" or "arpg_no_ru")
+    self.skills["tech_bonus2"].icon:InitTexture(arpg_m.tech >= skill_req(2) and "arpg_tech2" or "arpg_no_ru")
+    self.skills["tech_bonus1"].icon:InitTexture(arpg_m.tech >= skill_req(1) and "arpg_tech1" or "arpg_no_ru")
+    self.skills["surv_bonus7"].icon:InitTexture(arpg_m.surv >= skill_req(7) and "arpg_surv7" or "arpg_no_ld")
+    self.skills["surv_bonus6"].icon:InitTexture(arpg_m.surv >= skill_req(6) and "arpg_surv6" or "arpg_no_ld")
+    self.skills["surv_bonus5"].icon:InitTexture(arpg_m.surv >= skill_req(5) and "arpg_surv5" or "arpg_no_ld")
+    self.skills["surv_bonus4"].icon:InitTexture(arpg_m.surv >= skill_req(4) and "arpg_surv4" or "arpg_no_ld")
+    self.skills["surv_bonus3"].icon:InitTexture(arpg_m.surv >= skill_req(3) and "arpg_surv3" or "arpg_no_ld")
+    self.skills["surv_bonus2"].icon:InitTexture(arpg_m.surv >= skill_req(2) and "arpg_surv2" or "arpg_no_ld")
+    self.skills["surv_bonus1"].icon:InitTexture(arpg_m.surv >= skill_req(1) and "arpg_surv1" or "arpg_no_ld")
+    self.skills["mrdr_bonus7"].icon:InitTexture(arpg_m.mrdr >= skill_req(7) and "arpg_lut7" or "arpg_no_ld")
+    self.skills["mrdr_bonus6"].icon:InitTexture(arpg_m.mrdr >= skill_req(6) and "arpg_lut6" or "arpg_no_ld")
+    self.skills["mrdr_bonus5"].icon:InitTexture(arpg_m.mrdr >= skill_req(5) and "arpg_lut5" or "arpg_no_ld")
+    self.skills["mrdr_bonus4"].icon:InitTexture(arpg_m.mrdr >= skill_req(4) and "arpg_lut4" or "arpg_no_ld")
+    self.skills["mrdr_bonus3"].icon:InitTexture(arpg_m.mrdr >= skill_req(3) and "arpg_lut3" or "arpg_no_ld")
+    self.skills["mrdr_bonus2"].icon:InitTexture(arpg_m.mrdr >= skill_req(2) and "arpg_lut2" or "arpg_no_ld")
+    self.skills["mrdr_bonus1"].icon:InitTexture(arpg_m.mrdr >= skill_req(1) and "arpg_lut1" or "arpg_no_ld")
+    self.skills["armor_bonus7"].icon:InitTexture(arpg_m.armor >= skill_req(7) and "arpg_armor7" or "arpg_no_ld")
+    self.skills["armor_bonus6"].icon:InitTexture(arpg_m.armor >= skill_req(6) and "arpg_armor6" or "arpg_no_ld")
+    self.skills["armor_bonus5"].icon:InitTexture(arpg_m.armor >= skill_req(5) and "arpg_armor5" or "arpg_no_ld")
+    self.skills["armor_bonus4"].icon:InitTexture(arpg_m.armor >= skill_req(4) and "arpg_armor4" or "arpg_no_ld")
+    self.skills["armor_bonus3"].icon:InitTexture(arpg_m.armor >= skill_req(3) and "arpg_armor3" or "arpg_no_ld")
+    self.skills["armor_bonus2"].icon:InitTexture(arpg_m.armor >= skill_req(2) and "arpg_armor2" or "arpg_no_ld")
+	self.skills["armor_bonus1"].icon:InitTexture(arpg_m.armor >= skill_req(1) and "arpg_armor1" or "arpg_no_ld")
+    self.skills["stlk_bonus7"].icon:InitTexture(arpg_m.stlk >= skill_req(7) and "arpg_stlk7" or "arpg_no_rd")
+    self.skills["stlk_bonus6"].icon:InitTexture(arpg_m.stlk >= skill_req(6) and "arpg_stlk6" or "arpg_no_rd")
+    self.skills["stlk_bonus5"].icon:InitTexture(arpg_m.stlk >= skill_req(5) and "arpg_stlk5" or "arpg_no_rd")
+    self.skills["stlk_bonus4"].icon:InitTexture(arpg_m.stlk >= skill_req(4) and "arpg_stlk4" or "arpg_no_rd")
+    self.skills["stlk_bonus3"].icon:InitTexture(arpg_m.stlk >= skill_req(3) and "arpg_stlk3" or "arpg_no_rd")
+    self.skills["stlk_bonus2"].icon:InitTexture(arpg_m.stlk >= skill_req(2) and "arpg_stlk2" or "arpg_no_rd")
+    self.skills["stlk_bonus1"].icon:InitTexture(arpg_m.stlk >= skill_req(1) and "arpg_stlk1" or "arpg_no_rd")
+    self.stlk_pts_count:SetText(arpg_h.points)
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:OnKeyboard(dik, keyboard_action)
+    local res = CUIScriptWnd.OnKeyboard(self,dik,keyboard_action)
+    if (res == false) then
+        local bind = dik_to_bind(dik)
+        if keyboard_action == ui_events.WINDOW_KEY_PRESSED then
+            if dik == menu_key then
+                if keybind_pass() then
+                    self:Close()
+                end
+            elseif bind == key_bindings.kQUIT then
+                self:Close()
+            end
+        end
+    end
+    return res
+end
+----------------------------------------------------------------------------------------------
+function PerkSelector:Close()
+    self:HideDialog()
+    self:Show(false)
+    GUI = nil
+	news_manager.send_tip(db.actor, "%c[d_red][NOTE] Values in the RPG tooltip only take effect when perk is unlocked and are updated when re-opening the Perk menu.", nil, "arpg_skill_surv", 6000)
+    Unregister_UI("PerkSelector")
+end
+----------------------------------------------------------------------------------------------
+local function get_object_by_id(id) -- same as _g.script one but without spamming in console
+    if not id then return end
+    if (id == AC_ID) then return db.actor end
+
+    local obj = db.storage[id] and db.storage[id].object or level_object_by_id(id)
+    if not obj then return end
+    return obj
+end
+----------------------------------------------------------------------------------------------
+--------------[NEW] Monkeyscript for Good Riddance/Master Technician--------------------------
+
+base_crafting = ui_workshop.UIWorkshopCraft.Craft
+
+function ui_workshop.UIWorkshopCraft:Craft()
+	base_crafting(self)
+	if (arpg_m.tech >= skill_req(7)) then
+		local doubleChance = 1 + (arpg_m.tech - skill_req(7))
+		if doubleChance >= math.random(100) then
+			if IsItem("ammo",self.craft_item_r[1]) then
+				alife_create_item(self.craft_item_r[1], db.actor, {ammo = self.craft_item_r[2]})
+			else
+				for i = 1, self.craft_item_r[2] do
+					alife_create_item(self.craft_item_r[1], db.actor)
+				end
+			end
+		end
+	end
+end
+----------------------------------------------------------------------------------------------
+--------------------[NEW] Monkeyscript for Survivalist Passive--------------------------------
+
+base_cooking = item_cooking.UICook.OnCook
+GetSelectedMeal = item_cooking.UICook.GetSelectedMeal
+
+function item_cooking.UICook:OnCook()
+	base_cooking(self)
+	if (math.random(400) <= arpg_m.surv) then
+		local meal = self:GetSelectedMeal()
+		if (not meal) then
+			return
+		end
+		alife_create_item(meal.sec, db.actor)
+	end
+end
+
+----------------------------------------------------------------------------------------------
+---------------------------[NEW] Stalker Perk 1 - Silver-Tongued------------------------------
+
+community_bonus_self = 0
+community_bonus_other = 0
+local community_bonus = 0
+local skill_price_modifier = 0
+local item_costs = {}
+
+function on_get_item_cost(kind, obj, profile, calculated_cost, ret)
+	if profile.mode == 1 then -- when selling
+		ret.new_cost = math.floor((ret.new_cost or calculated_cost) * (1 + skill_price_modifier + community_bonus))
+	elseif profile.mode == 2 then -- when buying
+		ret.new_cost = math.ceil((ret.new_cost or calculated_cost) * (1 - skill_price_modifier - community_bonus))
+	end
+	item_costs[obj:id()] = ret.new_cost or calculated_cost
+end
+
+function ActorMenu_on_trade_started()
+	RegisterScriptCallback("actor_on_item_take", actor_on_item_buy)
+	RegisterScriptCallback("actor_on_item_drop", actor_on_item_sell)
+	trader = mob_trade.GetTalkingNpc()
+	
+	if trader and trader:character_community() == db.actor:character_community() then
+		community_bonus = community_bonus_self
+	elseif trader then
+		community_bonus = community_bonus_other
+	end
+	
+	skill_price_modifier = arpg_m.stlk * 0.0033
+end
+
+function ActorMenu_on_trade_closed()
+	UnregisterScriptCallback("actor_on_item_take", actor_on_item_buy)
+	UnregisterScriptCallback("actor_on_item_drop", actor_on_item_sell)
+	item_costs = {}
+end
+
+function actor_on_item_buy(obj)
+	cost = item_costs[obj:id()]
+end
+
+function actor_on_item_sell(obj)
+	cost = item_costs[obj:id()]
+end
+
+----------------------------------------------------------------------------------------------
+function on_game_start()
+    -- Техчасть
+	RegisterScriptCallback("actor_on_item_use", actor_on_item_use)
+    RegisterScriptCallback("save_state",                    save_state)
+    RegisterScriptCallback("load_state",                    load_state)
+    RegisterScriptCallback("on_key_press",                  on_key_press)
+    RegisterScriptCallback("on_key_release",                on_key_release)
+    --Прибираем за собой
+    RegisterScriptCallback("npc_on_use",                    der_npc_cleaner)
+    RegisterScriptCallback("monster_on_actor_use_callback", der_mon_cleaner)
+    RegisterScriptCallback("actor_on_update",               actor_on_update)
+    --Тестовый прыжок
+    RegisterScriptCallback("actor_on_jump",                 actor_on_jump)
+    --Призрачные патроны и Дюк Нюкем
+    --RegisterScriptCallback("actor_on_weapon_no_ammo",       actor_on_weapon_no_ammo)
+    RegisterScriptCallback("actor_on_weapon_reload",        actor_on_weapon_reload)
+    --Тяжёлый выстрел
+    RegisterScriptCallback("npc_on_before_hit",             der_shooter)
+    RegisterScriptCallback("monster_on_before_hit",         der_shooter)
+    --Взрывной выстрел, набор опыта и т.д
+    RegisterScriptCallback("monster_on_death_callback",     der_hunter)
+    RegisterScriptCallback("npc_on_death_callback",         der_hitman)
+    RegisterScriptCallback("actor_on_before_hit",           der_ninja)
+    --Сталкер-4. Бегун
+    RegisterScriptCallback("actor_on_footstep",             der_runner)
+    --RegisterScriptCallback("actor_on_item_take",             actor_on_item_take)
+	
+	----------------------------------------------------------------------------------------------------------------
+	---[NEW/ADDED] Added any "On Take Item" effects also affect when picking up off the ground + renamed function---
+	----------------------------------------------------------------------------------------------------------------
+	RegisterScriptCallback("actor_on_item_take",             loot_improvement)
+	RegisterScriptCallback("actor_item_to_ruck",             loot_improvement)
+	
+    --Отстойник
+    RegisterScriptCallback("actor_on_weapon_before_fire",   actor_on_weapon_before_fire)
+    RegisterScriptCallback("actor_on_weapon_jammed",        actor_on_weapon_jammed)
+	
+	--[NEW] Swap/Holster Speed
+	RegisterScriptCallback("actor_on_hud_animation_play", swapping_weapons)
+	
+	--[NEW] Silver Tongued Stalker 1 Perk
+	RegisterScriptCallback("ActorMenu_on_trade_started", ActorMenu_on_trade_started)
+	RegisterScriptCallback("ActorMenu_on_trade_closed", ActorMenu_on_trade_closed)
+	RegisterScriptCallback("on_get_item_cost", on_get_item_cost)
+	
+end
+----------------------------------------------------------------------------------------------
