@@ -1,10 +1,10 @@
 <string_table>
     <!-- MCM -->
     <string id="ui_mcm_menu_arpg">
-        <text>Аномали РПГ</text>
+        <text>Anomaly RPG</text>
     </string>
     <string id="ui_mcm_menu_arpg_title">
-        <text>Настройки Аномали РПГ</text>
+        <text>Настройки Anomaly RPG</text>
     </string>
     <string id="ui_mcm_arpg_exp_factor">
         <text>Множитель опыта</text>
@@ -23,23 +23,47 @@
     </string>
     <string id="ui_mcm_arpg_damage_factor_desc">
         <text>Каждый новый уровень урон от оружия увеличивается на заданное значение</text>
+	</string>
+	
+	<string id="ui_mcm_arpg_point_modifier">
+        <text>Модификатор открытия навыка</text>
     </string>
-
+    <string id="ui_mcm_arpg_point_modifier_desc">
+        <text>Модификатор, который влияет на количество очков ранга, необходимых для разблокировки перка. Более высокое значение соответствует более высокому требованию к очкам ранга для каждого уровня.\nФормула для справки:\nmath.floor[(Уровень * Модификатор Очков) ^ 1.4)]</text>
+    </string>
+	
     <string id="ui_mcm_arpg_logger">
         <text>Уведомления</text>
     </string>
     <string id="ui_mcm_arpg_log_battle">
         <text>Журнал боя</text>
     </string>
-    <string id="ui_mcm_arpg_log_def">
+	<string id="ui_mcm_arpg_log_vamp">
+        <text>Журнал вампиризма--</text>
+    </string>
+	<string id="ui_mcm_arpg_log_def">
         <text>Журнал защиты</text>
     </string>
-
+	<string id="ui_mcm_arpg_log_heal">
+        <text>Журнал здоровья</text>
+    </string>	
+	
     <string id="ui_mcm_menu_arpg_title">
         <text>Настройки хитмарков(требуется перезагрузка)</text>
     </string>
+	<string id="ui_mcm_arpg_add_bhs">
+        <text>Добавляет в сообщения повреждения конечностей (BHS)</text>
+    </string>
+	<string id="ui_mcm_lst_bhs">
+        <text>Есть BHS</text>
+    </string>
+	<string id="ui_mcm_lst_no_bhs">
+        <text>Нет BHS</text>
+    </string>
+	
+	
     <string id="ui_mcm_arpg_enable">
-        <text>Включить</text>
+        <text>Включить индикатор урона</text>
     </string>
     <string id="ui_mcm_arpg_a">
         <text>Прозрачность</text>
@@ -57,7 +81,7 @@
         <text>Время затухания</text>
     </string>
 
-    <!--потому что нельзя же было сделать унификацию ёпт-->
+
     <string id="encyclopedia_mutants_dog">
         <text>Слепой пёс</text>
     </string>
@@ -300,6 +324,9 @@
     <string id="rpg_lvl">
         <text>Уровень</text>
     </string>
+	<string id="rpg_lvlUpNew">
+        <text>Получен новый уровень!</text>
+    </string>			 
     <string id="rpg_1">
         <text>Получено</text>
     </string>

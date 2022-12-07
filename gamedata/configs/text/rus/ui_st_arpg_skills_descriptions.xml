@@ -1,0 +1,194 @@
+<string_table>
+
+        <!-- Деревья оружий -->
+	<string id="ui_arpg_hint_smg_tree">
+        <text>Пистолеты\n
+		Пассивно: %c[yellow]$stat% более высокая скорость извлечения/убирания оружия этого класса</text>
+    </string>
+	<string id="ui_arpg_hint_ar_tree">
+        <text>Штурмовые винтовки\n
+		Пассивно: %c[yellow]$stat% более высокая скорость извлечения/убирания оружия этого класса</text>
+    </string>
+	<string id="ui_arpg_hint_special_tree">
+        <text>Специальное оружие\n
+		Пассивно: %c[yellow]$stat% более высокая скорость извлечения/убирания оружия этого класса</text>
+    </string>
+	
+    <string id="ui_arpg_hint_ghost_ammo">
+        <text>Призрачные Боеприпасы — шанс вернуть боеприпасы при попадании оружием этого класса (удваивается при критическом выстреле):\n%c[yellow]$stat% шанс возврата</text>
+    </string>
+    <string id="ui_arpg_hint_heavy_shot_1">
+        <text>Мощный Выстрел I - Увеличение урона оружием этого класса: \n+%c[pda_blue]$stat% урона</text>
+    </string>
+    <string id="ui_arpg_hint_disabling_shot">
+        <text>Клинящий Выстрел — Шанс заклинить оружие противника при попадании ему в руку из оружия этого класса.</text>
+    </string>
+    <string id="ui_arpg_hint_headhunter">
+        <text>Охотник за Головами — при критическом выстреле из оружия этого класса вы получаете небольшую сумму денег:\n%c[yellow]$stat рублей</text>
+    </string>
+    <string id="ui_arpg_hint_bloody_mess">
+        <text>Кровавое Месиво — при удержании SHIFT, выстрел во врага из оружия этого класса может привести к тому, что цель взорвется, нанеся урон ближайшим врагам.:\n%c[pda_blue]25% шанс</text>
+    </string>
+    <string id="ui_arpg_hint_armor_breaker">
+        <text>Сокрушитель Брони - Увеличивает урон для оружия этого класса.:\n%c[yellow]$stat% множитель урона</text>
+    </string>
+    <string id="ui_arpg_hint_disarming_shot">
+        <text>Обезоруживающий Выстрел — при выстреле из оружия этого класса по оружию врага есть шанс, что оно у него выпадет.:\n%c[yellow]$stat% шанс</text>
+    </string>
+    <string id="ui_arpg_hint_crippling_shot">
+        <text>Останавливающий Выстрел — при выстреле из винтовки по ногам есть шанс обездвижить противника.</text>
+    </string>
+	<string id="ui_arpg_hint_heavy_shot_2">
+        <text>Мощный Выстрел II - Еще больше увеличивает урон оружием этого класса:\n%c[pda_blue]$stat% увеличение урона</text>
+    </string>
+	<string id="ui_arpg_hint_heavy_shot_3">
+        <text>Мощный Выстрел II - Еще больше увеличивает урон оружием этого класса:\n%c[pda_blue]$stat% увеличение урона</text>
+    </string>
+	<string id="ui_arpg_hint_bloody_mess_special">
+        <text>Кровавая Баня — удерживая SHIFT, выстрел во врага из оружия этого класса может привести к тому, что цель взорвется, нанеся большой урон ближайшим врагам (более сильный взрыв, чем «Кровавое месиво»):\n%c[pda_blue]25% шанс</text>
+    </string>
+
+		<!-- Дерево кровавых технологий -->
+	<string id="ui_arpg_hint_tech_tree">
+        <text>"Кровавые Технологии"</text>
+    </string>
+    <string id="ui_arpg_hint_carfeul_handler">
+        <text>Осторожный Манипулятор — дарит небольшой заряд батареи всем исправным устройствам при убийстве врага.:\n%c[yellow]$stat% энергии восстановлено</text>
+    </string>
+    <string id="ui_arpg_hint_helmet_repair">
+        <text>Вампирский Шлем - ваш экипированный шлем восстанавливается при убийстве врага (количество увеличивается в зависимости от общего уровня навыков Выживания):\n+%c[yellow]$stat% к состоянию шлема</text>
+    </string>
+    <string id="ui_arpg_hint_weapon_repair">
+        <text>Вампирское Оружие - Ваше текущее оружие и его части ремонтируются при убийстве врага (количество увеличивается в зависимости от общего уровня навыков соответствующего дерева Оружия):\n
+		+%c[yellow]$stat% к состоянию оружия\n
+		+%c[yellow]$number% к состоянию частей оружия</text>
+    </string>
+	<string id="ui_arpg_hint_jam_repair">
+        <text>Специалист по Клину - При удалении клина оружия ремонтируется одна из его частей (кроме ствола):\n+%c[yellow]$stat% к состоянию случайной части</text>
+    </string>
+    <string id="ui_arpg_hint_armor_repair">
+        <text>Вампирская броня - Ваша экипированная броня восстанавливается при убийстве врага (количество увеличивается в зависимости от общего уровня навыков Брони):\n+%c[yellow]$stat% к состоянию брони</text>
+    </string>
+	<string id="ui_arpg_hint_barrel_cleaner">
+        <text>Оружие-Кузнец — при стрельбе из оружия у вас есть 15% шанс восстановить состояние ствола.:\n+%c[yellow]$stat% к состоянию ствола</text>
+    </string>
+	<string id="ui_arpg_hint_good_riddance">
+        <text>Мастер-Техник — при крафте у вас есть небольшой шанс сделать 2 предмета по цене 1:\n%c[yellow]$stat% шанс</text>
+    </string>
+	
+	
+	<!-- Дерево Выживания -->
+	<string id="ui_arpg_hint_survival_tree">
+        <text>Выживание\n
+		Пассивно: %c[yellow]$stat% шанс приготовить ещё одну порцию блюда</text>															
+    </string>
+	<string id="ui_arpg_hint_second_wind">
+        <text>Второе Дыхание — когда ваша выносливость падает ниже 15%, вы получите дополнительную выносливость:\n+%c[yellow]$stat% выносливости</text>
+    </string>
+    <string id="ui_arpg_hint_bullseye">
+        <text>В Яблочко! - Дает множитель ко всему наносимому урону:\n%c[pda_blue]5% множитель урона</text>
+    </string>
+    <string id="ui_arpg_hint_cyber_medic">
+        <text>Кибер-Медик - Вы постепенно сами останавливаете кровь:\n+%c[yellow]$stat% к остановке кровотечения</text>
+    </string>
+    <string id="ui_arpg_hint_dodger_surv">
+        <text>Ловкач - При попадании, у вас есть %c[pda_blue]0.1% шанс %c[ui_6]избежать любого урона (шанс увеличивается до %c[pda_blue]0.5% %c[ui_6], если есть навык "Проныра" в ветке Брони)</text>
+    </string>
+    <string id="ui_arpg_hint_ignorance_surv">
+        <text>Пренебрежение - Уменьшение любого входящего урона на %c[pda_blue]2.5% %c[ui_6](увеличивается до %c[pda_blue]5% %c[ui_6], если есть навык "Игнорирование" в ветке Брони)</text>
+    </string>
+    <string id="ui_arpg_hint_skilled_doctor">
+        <text>Медик — При использовании медицинского предмета у вас есть небольшой шанс получить копию этого предмета со случайным количеством использования:\n%c[yellow]$stat% шанс</text>
+    </string>
+    <string id="ui_arpg_hint_comfort_food">
+        <text>Гурман - Когда вы едите или пьете, вы получаете прибавку к здоровью, равную их восстановлению от жажды или голода (%c[pda_blue]в зависимости от того, что выше%c[ui_6])</text>
+    </string>
+	
+	
+    <!-- дерево Мародёрства -->
+	<string id="ui_arpg_hint_looter_tree">
+        <text>Мародёрство</text>
+    </string>
+    <string id="ui_arpg_hint_ammo_eater">
+        <text>Поиск Боеприпасов — количество боеприпасов увеличивается при обыске тела:\n%c[yellow]$stat% дополнительных патронов</text>
+    </string>
+	<string id="ui_arpg_hint_medicine_man">
+        <text>Санитар - При ограблении врага у вас есть шанс найти медицинский предмет (качество найденного предмета увеличивается с большей вероятностью):\n%c[yellow]$stat% шанс</text>
+    </string>
+	<string id="ui_arpg_hint_artefinder">
+        <text>Нюх На Артефакты - При ограблении врага у вас есть шанс найти артефакт, который обычно находится в текущей области. Кроме того, любой артефакт, который вы найдете, теперь будет иметь более высокую эффективность:\n
+		%c[yellow]$stat% шанс найти артефакт\n
+		%c[yellow]$number% минимальная эффективность найденных артефактов\n
+		%c[yellow]$boost% максимальная эффективность найденных артефактов</text>
+    </string>
+	<string id="ui_arpg_hint_weapon_loot">
+        <text>Состояние Нового Оружия - При подборе или добыче оружия оно будет иметь лучшее состояние (включая части оружия):\n%c[yellow]$stat% мин. состояние оружия</text>
+    </string>
+    <string id="ui_arpg_hint_outfit_loot">
+        <text>Состояние Нового Снаряжения - При подборе или добыче брони или шлема они будут иметь лучшее состояние:\n%c[yellow]$stat% мин. состояние снаряжения</text>
+    </string>
+	<string id="ui_arpg_hint_beggar">
+        <text>Попрошайка - Сумма денег, которую можно получить на трупе, увеличивается:\n%c[yellow]$stat% множитель получаемых денег</text>
+    </string>
+	<string id="ui_arpg_hint_master_thief">
+        <text>Мастер Вор - теперь вам предоставляется множество баффов при мародёрстве:\n
+		%c[pda_blue]25% найти координаты тайника\n
+		%c[yellow]$stat% доп. шанс найти медицинский предмет\n
+		%c[yellow]$number% доп. шанс найти артефакт\n
+		%c[pda_blue]0.01% эффективности перезарядки артефакта в секунду</text>
+    </string>
+
+    <!-- дерево Брони -->
+	<string id="ui_arpg_hint_armorer_tree">
+        <text>Броня</text>
+    </string>
+	<string id="ui_arpg_hint_plate_finder">
+        <text>Поиск Пластин — при ограблении врага у вас есть шанс найти поврежденную кевларовую пластину:\n%c[yellow]$stat% шанс</text>
+    </string>
+	<string id="ui_arpg_hint_traditional_kevlar">
+        <text>Каменная Кожа - Снижает урон от пульб:\n%c[yellow]$stat% bullet resistance</text>
+    </string>
+	<string id="ui_arpg_hint_ignorance_armor">
+        <text>Игнорирование - Уменьшение любого получаемого урона на %c[pda_blue]2.5% %c[ui_6](может достигнуть %c[pda_blue]5% %c[ui_6],если есть навык "Пренебрежение" в ветке Выживания)</text>
+    </string>
+	<string id="ui_arpg_hint_spiked">
+        <text>Ёж - При получении урона ваш враг также получает часть этого урона.:\n%c[yellow]$stat% ответного урона</text>
+    </string>
+	<string id="ui_arpg_hint_anomalous_materials">
+        <text>Рождённый в Аномалии - Аномалии будут наносить меньше урона:\nУменьшение урона на %c[yellow]$stat%</text>
+    </string>
+	<string id="ui_arpg_hint_dodger_armor">
+        <text>Проныра - При попадании, у вас есть %c[pda_blue]0.1% шанс %c[ui_6]избежать любого урона (шанс увеличивается до %c[pda_blue]0.5% %c[ui_6], если есть навык "Ловкач" в ветке Выживания))</text>
+    </string>
+	<string id="ui_arpg_hint_refreshness">
+        <text>Закалённый в боях - Вы пассивно медленно оправляетесь от %c[pda_blue]кровотечения, головокружения и опьянения%c[ui_6].</text>
+    </string>
+    
+	<!-- Дерево Сталкера/Легенды Зоны -->
+	<string id="ui_arpg_hint_stalker_tree">
+        <text>Сталкер-Легенда</text>
+    </string>
+	<string id="ui_arpg_hint_xmark">
+        <text>Красноречие - Теперь вы получаете более выгодные цены при покупке и продаже:\n%c[yellow]$stat% модификатор цены</text>
+    </string>
+	<string id="ui_arpg_hint_recon">
+        <text>Разведчик - Убитые вами враги теперь будут отображаться на миникарте и на вашем КПК.</text>
+    </string>
+	<string id="ui_arpg_hint_rad_reload">
+        <text>Чувство Зоны - При перезарядке оружия вы снижаете уровень радиации:\nСнижение уровня радиации на %c[yellow]$stat%</text>
+    </string>
+	<string id="ui_arpg_hint_runner">
+        <text>Синергия - Каждый ваш шаг дает небольшое количество здоровья:\n+%c[yellow]$stat% Здоровья/шаг</text>
+    </string>
+	<string id="ui_arpg_hint_vampirism">
+        <text>Вампир - При убийстве врага вы получаете небольшое количество Здоровья и Выносливости::\n%c[pda_blue]2.5% Здоровья и Выносливости</text>
+    </string>
+	<string id="ui_arpg_hint_warlock">
+        <text>Терминатор - при убийстве врага вы получаете в рюкзак %c[pda_blue]треть размера магазина вашего оружия %c[ui_6]в виде патронов (%c[d_red]Минимальный размер магазина - 3%c[ui_6])</text>
+    </string>
+	<string id="ui_arpg_hint_necromancer">
+        <text>Проклятье Зоны - При нанесении урона вы получаете %c[yellow]$stat% Здоровья. Вы также полностью восстанавливаете свое %c[pda_blue]пси-здоровье при убийстве, %c[ui_6], а также увеличиваете на %c[pda_blue]25% урон зомби.</text>
+    </string>
+	
+	
+</string_table>
