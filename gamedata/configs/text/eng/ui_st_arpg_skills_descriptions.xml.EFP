@@ -79,7 +79,8 @@
 	
 	<!-- Survivalist Tree -->
 	<string id="ui_arpg_hint_survival_tree">
-        <text>Survivalist Tree</text>
+        <text>Survivalist Tree\n
+		Passive: %c[yellow]$stat% chance for an extra item when cooking</text>
     </string>
 	<string id="ui_arpg_hint_second_wind">
         <text>Second Wind - When your Stamina is under 15%, you will be granted some additional Stamina:\n%c[yellow]$stat% Stamina on proc</text>
@@ -116,9 +117,7 @@
     </string>
 	<string id="ui_arpg_hint_artefinder">
         <text>Arte-finder - When looting an enemy, you have a chance to find an artefact that is normally found in the current area. Additionaly, any artefact you find will now have higher-than-normal efficiency:\n
-		%c[yellow]$stat% chance to loot an artefact
-		%c[yellow]$number% minimum found artefact efficiency\n
-		%c[yellow]$boost% maximum found artefact efficiency</text>
+		%c[yellow]$stat% chance to loot an artefact</text>
     </string>
 	<string id="ui_arpg_hint_weapon_loot">
         <text>Weapon Loot Condition - When picking up or looting a weapon, it will have better condition if below a certain value (increasing this bonus is tied to the %c[pda_blue]weapon's perk tree level%c[ui_6]):\n%c[yellow]$stat% min. weapon condition</text>
@@ -166,9 +165,10 @@
 	<!-- Stalker/Hero Tree -->
 	<string id="ui_arpg_hint_stalker_tree">
         <text>Stalker Tree</text>
-    </string>
+     </string>
+	<!-- Previously was X-Mark, now Silver-Tongued -->
 	<string id="ui_arpg_hint_xmark">
-        <text>X-Mark - %c[d_red] CURRENTLY NON-FUNCTIONAL: GRANTS THE NEXT SKILL AUTOMATICALLY</text>
+        <text>Silver-Tongued - You now receive better prices when buying and selling:\n%c[yellow]$stat% price modifier</text>
     </string>
 	<string id="ui_arpg_hint_recon">
         <text>Recon - Enemies you kill will now show on the minimap and on your PDA</text>

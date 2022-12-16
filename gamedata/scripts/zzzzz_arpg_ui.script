@@ -15,6 +15,8 @@ local K_Timer               = false
 local level_object_by_id    = level.object_by_id
 local get_config            = arpg_mcm.get_config
 local mod_dmg               = get_config("damage_factor") or arpg_mcm.defaults["damage_factor"] or 0.1
+local point_modifier		= 10
+
 local bhs_patch             = bhs_fixed
 local log_battle            = false
 local log_absorb            = false
@@ -53,6 +55,7 @@ add_effect = function(self, func, on_end)
 end
 	  
 -- mod_dmg               = get_config("damage_factor")
+point_modifier		  = get_config("point_modifier")
 bhs_patch             = get_config("add_bhs")
 log_battle            = get_config("log_battle")
 log_absorb            = get_config("log_vamp")
@@ -170,21 +173,6 @@ function try_spawn_meds(box, looter_level)
         }
         roll_item_tiered(tbl, box, medChance)
     end
-end
-
-----------------------------------------------------------------------------------------------
--------------------[NEW] System to Stun Targets (Arti's Ballistics)---------------------------
-----------------------------------------------------------------------------------------------
-local stun_anims = {
-    "norm_2_critical_hit_torso_0", -- good
-    "norm_1_critical_hit_head_0", -- good
-}
-
-function play_anim(npc)
-    if npc:movement_type() == move.walk or npc:movement_type() == move.run then
-        npc:set_movement_type(move.stand)
-    end
-    npc:play_cycle(stun_anims[math.random(#stun_anims)], true)
 end
 
 ----------------------------------------------------------------------------------------------
@@ -428,7 +416,7 @@ function skill_req(level)
 end
 ----------------------------------------------------------------------------------------------
 function req_increment()
-    return math.floor((arpg_h.level * 10) ^ 1.4)
+    return math.floor((arpg_h.level * point_modifier) ^ 1.4)
 end
 ----------------------------------------------------------------------------------------------
 function set_levelup()
@@ -438,18 +426,6 @@ function set_levelup()
         arpg_h.level = arpg_h.level + 1
         arpg_h.points  = arpg_h.points + 1
     end
-    ----В модном стиле добавляем веса и скорости
-	-- local carry_weight = get_game_factor("weight") or 20
-    --local weight_bonus = arpg_h.level * 0.5000
-    --local speed_bonus1 = 1.51 * (1 + arpg_h.level * 0.005)
-    --local speed_bonus2 = (1 + arpg_h.level * 0.005)
-    --local speed_bonus3 = 1.75 * (1 + arpg_h.level * 0.005)
-    --db.actor:set_actor_max_weight(carry_weight + weight_bonus)
-    --db.actor:set_actor_max_walk_weight(carry_weight + math.floor(weight_bonus * 1.4))
-    --db.actor:set_actor_run_coef(speed_bonus1)
-    --db.actor:set_actor_runback_coef(speed_bonus2)
-    --db.actor:set_actor_sprint_koef(speed_bonus3)
-	-- removing the carry weight + speed bonus (GAMMA covers this with Skills mod)
 end
 ---------------------------------------------------------------------------------------------- [NEW] Weapon Swap Speed Bonus (Utjan's Skills Expansion)
 function swapping_weapons(anim_table,obj)
@@ -926,8 +902,8 @@ function der_shooter(npc, shit, bone_id, flags)
 ------Батл-лог
 
         if log_battle then
-            local total_shit = math.floor(shit.power * 100000)
-            local bonus_shit = total_shit - math.floor(base_shit * 100000)
+            local total_shit = math.floor(shit.power * 100)
+            local bonus_shit = total_shit - math.floor(base_shit * 100)
             local gun_name = gt(ini_sys:r_string_ex(weapon:section(),"inv_name_short"))
             --Если нет кости, то весь урон летит в жбан
             local bone_id = (bone_id < 45) and bone_id or 15
@@ -935,17 +911,18 @@ function der_shooter(npc, shit, bone_id, flags)
             printf("Target hit: %s", bone_table[bone_id]["txt"])
 
             local msg
-            msg = gt("rpg_hit_1") .. " " .. bl_victim .. "- "
+            -- msg = gt("rpg_hit_1") .. " " .. bl_victim .. "- "
             if shit.power < 4 then
-                msg = msg .. c_table[12] .. gt("rpg_hit_2") .. " a total base damage of " .. c_table[9] .. total_shit .. " "
+                msg = c_table[12] .. gt("rpg_hit_2") .. " a total base damage of " .. c_table[9] .. total_shit .. " "
                 msg = msg .. c_table[12] .. gt("rpg_hit_3") .. " " .. gt("carpg_bones_z") .. " " .. gt("carpg_bones_" .. bone_id) .. " " .. gt("rpg_hit_4")
                 msg = msg .. " " .. gun_name .. ". "
                 msg = msg .. "(" .. c_table[3] .. "+" .. bonus_shit .. c_table[12] .. " from "
                 msg = msg .. c_table[0] .. "x" .. dmg_mult .. c_table[12] .. " " .. gt("rpg_hit_5") .. ")"
-            else
-                msg = msg .. gt("carpg_bones_end")
-            end
-            db.actor:give_game_news("ui_mcm_arpg_log_battle", msg, "ui_inGame2_neutral_1", 0, 100)
+            --else
+                --msg = msg .. gt("carpg_bones_end")
+            --end
+				db.actor:give_game_news("ui_mcm_arpg_log_battle", msg, "ui_inGame2_neutral_1", 0, 100)
+			end
         end
     end
 end
