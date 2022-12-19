@@ -5,436 +5,436 @@
         <text>Anomaly RPG</text>
     </string>
     <string id="ui_mcm_menu_arpg_title">
-        <text>Настройки Anomaly RPG</text>
+        <text>ГЌГ Г±ГІГ°Г®Г©ГЄГЁ Anomaly RPG</text>
     </string>
     <string id="ui_mcm_arpg_exp_factor">
-        <text>Множитель опыта</text>
+        <text>ГЊГ­Г®Г¦ГЁГІГҐГ«Гј Г®ГЇГ»ГІГ </text>
     </string>
     <string id="ui_mcm_arpg_exp_factor_desc">
-        <text>Влияет на скорость набора опыта и, как следствие, прокачки</text>
+        <text>Г‚Г«ГЁГїГҐГІ Г­Г  Г±ГЄГ®Г°Г®Г±ГІГј Г­Г ГЎГ®Г°Г  Г®ГЇГ»ГІГ  ГЁ, ГЄГ ГЄ Г±Г«ГҐГ¤Г±ГІГўГЁГҐ, ГЇГ°Г®ГЄГ Г·ГЄГЁ</text>
     </string>
     <string id="ui_mcm_arpg_ammo_factor">
-        <text>Возврат патронов</text>
+        <text>Г‚Г®Г§ГўГ°Г ГІ ГЇГ ГІГ°Г®Г­Г®Гў</text>
     </string>
     <string id="ui_mcm_arpg_ammo_factor_desc">
-        <text>С каждым новым уровнем мастерства возрастает возможность не потратить выпущенный патрон. Этот ползунок регулирует прирост шанса с каждым новым уровнем.</text>
+        <text>Г‘ ГЄГ Г¦Г¤Г»Г¬ Г­Г®ГўГ»Г¬ ГіГ°Г®ГўГ­ГҐГ¬ Г¬Г Г±ГІГҐГ°Г±ГІГўГ  ГўГ®Г§Г°Г Г±ГІГ ГҐГІ ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГј Г­ГҐ ГЇГ®ГІГ°Г ГІГЁГІГј ГўГ»ГЇГіГ№ГҐГ­Г­Г»Г© ГЇГ ГІГ°Г®Г­. ГќГІГ®ГІ ГЇГ®Г«Г§ГіГ­Г®ГЄ Г°ГҐГЈГіГ«ГЁГ°ГіГҐГІ ГЇГ°ГЁГ°Г®Г±ГІ ГёГ Г­Г±Г  Г± ГЄГ Г¦Г¤Г»Г¬ Г­Г®ГўГ»Г¬ ГіГ°Г®ГўГ­ГҐГ¬.</text>
     </string>
     <string id="ui_mcm_arpg_damage_factor">
-        <text>Бонус к урону (%)</text>
+        <text>ГЃГ®Г­ГіГ± ГЄ ГіГ°Г®Г­Гі (%)</text>
     </string>
     <string id="ui_mcm_arpg_damage_factor_desc">
-        <text>Каждый новый уровень урон от оружия увеличивается на заданное значение</text>
+        <text>ГЉГ Г¦Г¤Г»Г© Г­Г®ГўГ»Г© ГіГ°Г®ГўГҐГ­Гј ГіГ°Г®Г­ Г®ГІ Г®Г°ГіГ¦ГЁГї ГіГўГҐГ«ГЁГ·ГЁГўГ ГҐГІГ±Гї Г­Г  Г§Г Г¤Г Г­Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ</text>
 	</string>
 	
 	<string id="ui_mcm_arpg_point_modifier">
-        <text>Модификатор открытия навыка</text>
+        <text>ГЊГ®Г¤ГЁГґГЁГЄГ ГІГ®Г° Г®ГІГЄГ°Г»ГІГЁГї Г­Г ГўГ»ГЄГ </text>
     </string>
     <string id="ui_mcm_arpg_point_modifier_desc">
-        <text>Модификатор, который влияет на количество очков ранга, необходимых для разблокировки перка. Более высокое значение соответствует более высокому требованию к очкам ранга для каждого уровня.\nФормула для справки:\nmath.floor[(Уровень * Модификатор Очков) ^ 1.4)]</text>
+        <text>ГЊГ®Г¤ГЁГґГЁГЄГ ГІГ®Г°, ГЄГ®ГІГ®Г°Г»Г© ГўГ«ГЁГїГҐГІ Г­Г  ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г®Г·ГЄГ®Гў Г°Г Г­ГЈГ , Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г»Гµ Г¤Г«Гї Г°Г Г§ГЎГ«Г®ГЄГЁГ°Г®ГўГЄГЁ ГЇГҐГ°ГЄГ . ГЃГ®Г«ГҐГҐ ГўГ»Г±Г®ГЄГ®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГҐГІ ГЎГ®Г«ГҐГҐ ГўГ»Г±Г®ГЄГ®Г¬Гі ГІГ°ГҐГЎГ®ГўГ Г­ГЁГѕ ГЄ Г®Г·ГЄГ Г¬ Г°Г Г­ГЈГ  Г¤Г«Гї ГЄГ Г¦Г¤Г®ГЈГ® ГіГ°Г®ГўГ­Гї.\nГ”Г®Г°Г¬ГіГ«Г  Г¤Г«Гї Г±ГЇГ°Г ГўГЄГЁ:\nmath.floor[(Г“Г°Г®ГўГҐГ­Гј * ГЊГ®Г¤ГЁГґГЁГЄГ ГІГ®Г° ГЋГ·ГЄГ®Гў) ^ 1.4)]</text>
     </string>
 	
     <string id="ui_mcm_arpg_logger">
-        <text>Уведомления</text>
+        <text>Г“ГўГҐГ¤Г®Г¬Г«ГҐГ­ГЁГї</text>
     </string>
     <string id="ui_mcm_arpg_log_battle">
-        <text>Журнал боя</text>
+        <text>Г†ГіГ°Г­Г Г« ГЎГ®Гї</text>
     </string>
 	<string id="ui_mcm_arpg_log_vamp">
-        <text>Журнал вампиризма--</text>
+        <text>Г†ГіГ°Г­Г Г« ГўГ Г¬ГЇГЁГ°ГЁГ§Г¬Г </text>
     </string>
 	<string id="ui_mcm_arpg_log_def">
-        <text>Журнал защиты</text>
+        <text>Г†ГіГ°Г­Г Г« Г§Г Г№ГЁГІГ»</text>
     </string>
 	<string id="ui_mcm_arpg_log_heal">
-        <text>Журнал здоровья</text>
+        <text>Г†ГіГ°Г­Г Г« Г§Г¤Г®Г°Г®ГўГјГї</text>
     </string>	
 	
     <string id="ui_mcm_menu_arpg_title">
-        <text>Настройки хитмарков(требуется перезагрузка)</text>
+        <text>ГЌГ Г±ГІГ°Г®Г©ГЄГЁ ГµГЁГІГ¬Г Г°ГЄГ®Гў(ГІГ°ГҐГЎГіГҐГІГ±Гї ГЇГҐГ°ГҐГ§Г ГЈГ°ГіГ§ГЄГ )</text>
     </string>
 	<string id="ui_mcm_arpg_add_bhs">
-        <text>Добавляет в сообщения повреждения конечностей (BHS)</text>
+        <text>Г„Г®ГЎГ ГўГ«ГїГҐГІ Гў Г±Г®Г®ГЎГ№ГҐГ­ГЁГї ГЇГ®ГўГ°ГҐГ¦Г¤ГҐГ­ГЁГї ГЄГ®Г­ГҐГ·Г­Г®Г±ГІГҐГ© (BHS)</text>
     </string>
 	<string id="ui_mcm_lst_bhs">
-        <text>Есть BHS</text>
+        <text>Г…Г±ГІГј BHS</text>
     </string>
 	<string id="ui_mcm_lst_no_bhs">
-        <text>Нет BHS</text>
+        <text>ГЌГҐГІ BHS</text>
     </string>
 	
 	
     <string id="ui_mcm_arpg_enable">
-        <text>Включить индикатор урона</text>
+        <text>Г‚ГЄГ«ГѕГ·ГЁГІГј ГЁГ­Г¤ГЁГЄГ ГІГ®Г° ГіГ°Г®Г­Г </text>
     </string>
     <string id="ui_mcm_arpg_a">
-        <text>Прозрачность</text>
+        <text>ГЏГ°Г®Г§Г°Г Г·Г­Г®Г±ГІГј</text>
     </string>
     <string id="ui_mcm_arpg_r">
-        <text>Красный</text>
+        <text>ГЉГ°Г Г±Г­Г»Г©</text>
     </string>
     <string id="ui_mcm_arpg_g">
-        <text>Зелёный</text>
+        <text>Г‡ГҐГ«ВёГ­Г»Г©</text>
     </string>
     <string id="ui_mcm_arpg_b">
-        <text>Синий</text>
+        <text>Г‘ГЁГ­ГЁГ©</text>
     </string>
     <string id="ui_mcm_arpg_fade">
-        <text>Время затухания</text>
+        <text>Г‚Г°ГҐГ¬Гї Г§Г ГІГіГµГ Г­ГЁГї</text>
     </string>
 
 
     <string id="encyclopedia_mutants_dog">
-        <text>Слепой пёс</text>
+        <text>Г‘Г«ГҐГЇГ®Г© ГЇВёГ±</text>
     </string>
 
-    <!-- Лог боя-->
+    <!-- Г‹Г®ГЈ ГЎГ®Гї-->
     <string id="rpg_hit_1">
-        <text>Цель:</text>
+        <text>Г–ГҐГ«Гј:</text>
     </string>
     
     <string id="rpg_hit_2">
-        <text>Нанесено</text>
+        <text>ГЌГ Г­ГҐГ±ГҐГ­Г®</text>
     </string>
     
     <string id="rpg_hit_3">
-        <text>урона</text>
+        <text>ГіГ°Г®Г­Г </text>
     </string>
 
     <string id="rpg_hit_4">
-        <text>из</text>
+        <text>ГЁГ§</text>
     </string>
 
     <string id="rpg_hit_5">
-        <text>бонусного</text>
+        <text>ГЎГ®Г­ГіГ±Г­Г®ГЈГ®</text>
     </string>
     
-    <!-- регистрация попаданий-->
+    <!-- Г°ГҐГЈГЁГ±ГІГ°Г Г¶ГЁГї ГЇГ®ГЇГ Г¤Г Г­ГЁГ©-->
     <string id="carpg_bones_z">
-        <text>в</text>
+        <text>Гў</text>
     </string>
     <string id="carpg_bones_0">
-        <text>хвост</text>
+        <text>ГµГўГ®Г±ГІ</text>
     </string>
     <string id="carpg_bones_1">
-        <text>макушку</text>
+        <text>Г¬Г ГЄГіГёГЄГі</text>
     </string>
     <string id="carpg_bones_2">
-        <text>пах</text>
+        <text>ГЇГ Гµ</text>
     </string>
     <string id="carpg_bones_3">
-        <text>левое бедро</text>
+        <text>Г«ГҐГўГ®ГҐ ГЎГҐГ¤Г°Г®</text>
     </string>
     <string id="carpg_bones_4">
-        <text>левую голень</text>
+        <text>Г«ГҐГўГіГѕ ГЈГ®Г«ГҐГ­Гј</text>
     </string>
     <string id="carpg_bones_5">
-        <text>левую пятку</text>
+        <text>Г«ГҐГўГіГѕ ГЇГїГІГЄГі</text>
     </string>
     <string id="carpg_bones_6">
-        <text>левую стопу</text>
+        <text>Г«ГҐГўГіГѕ Г±ГІГ®ГЇГі</text>
     </string>
     <string id="carpg_bones_7">
-        <text>правое бедро</text>
+        <text>ГЇГ°Г ГўГ®ГҐ ГЎГҐГ¤Г°Г®</text>
     </string>
     <string id="carpg_bones_8">
-        <text>правую голень</text>
+        <text>ГЇГ°Г ГўГіГѕ ГЈГ®Г«ГҐГ­Гј</text>
     </string>
     <string id="carpg_bones_9">
-        <text>правую пятку</text>
+        <text>ГЇГ°Г ГўГіГѕ ГЇГїГІГЄГі</text>
     </string>
     <string id="carpg_bones_10">
-        <text>правую стопу</text>
+        <text>ГЇГ°Г ГўГіГѕ Г±ГІГ®ГЇГі</text>
     </string>
     <string id="carpg_bones_11">
-        <text>живот</text>
+        <text>Г¦ГЁГўГ®ГІ</text>
     </string>
     <string id="carpg_bones_12">
-        <text>грудь</text>
+        <text>ГЈГ°ГіГ¤Гј</text>
     </string>
     <string id="carpg_bones_13">
-        <text>крестец</text>
+        <text>ГЄГ°ГҐГ±ГІГҐГ¶</text>
     </string>
     <string id="carpg_bones_14">
-        <text>шею</text>
+        <text>ГёГҐГѕ</text>
     </string>
     <string id="carpg_bones_15">
-        <text>голову</text>
+        <text>ГЈГ®Г«Г®ГўГі</text>
     </string>
     <string id="carpg_bones_16">
-        <text>левый глаз</text>
+        <text>Г«ГҐГўГ»Г© ГЈГ«Г Г§</text>
     </string>
     <string id="carpg_bones_17">
-        <text>правый глаз</text>
+        <text>ГЇГ°Г ГўГ»Г© ГЈГ«Г Г§</text>
     </string>
     <string id="carpg_bones_18">
-        <text>переносицу</text>
+        <text>ГЇГҐГ°ГҐГ­Г®Г±ГЁГ¶Гі</text>
     </string>
     <string id="carpg_bones_19">
-        <text>челюсть</text>
+        <text>Г·ГҐГ«ГѕГ±ГІГј</text>
     </string>
     <string id="carpg_bones_20">
-        <text>левую ключицу</text>
+        <text>Г«ГҐГўГіГѕ ГЄГ«ГѕГ·ГЁГ¶Гі</text>
     </string>
     <string id="carpg_bones_21">
-        <text>левое плечо</text>
+        <text>Г«ГҐГўГ®ГҐ ГЇГ«ГҐГ·Г®</text>
     </string>
     <string id="carpg_bones_22">
-        <text>левое предплечье</text>
+        <text>Г«ГҐГўГ®ГҐ ГЇГ°ГҐГ¤ГЇГ«ГҐГ·ГјГҐ</text>
     </string>
     <string id="carpg_bones_23">
-        <text>левое запястье</text>
+        <text>Г«ГҐГўГ®ГҐ Г§Г ГЇГїГ±ГІГјГҐ</text>
     </string>
     <string id="carpg_bones_24">
-        <text>левый большой палец</text>
+        <text>Г«ГҐГўГ»Г© ГЎГ®Г«ГјГёГ®Г© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_25">
-        <text>левый большой палец</text>
+        <text>Г«ГҐГўГ»Г© ГЎГ®Г«ГјГёГ®Г© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_26">
-        <text>левый большой палец</text>
+        <text>Г«ГҐГўГ»Г© ГЎГ®Г«ГјГёГ®Г© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_27">
-        <text>левый средний палец</text>
+        <text>Г«ГҐГўГ»Г© Г±Г°ГҐГ¤Г­ГЁГ© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_28">
-        <text>левый средний палец</text>
+        <text>Г«ГҐГўГ»Г© Г±Г°ГҐГ¤Г­ГЁГ© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_29">
-        <text>левый средний палец</text>
+        <text>Г«ГҐГўГ»Г© Г±Г°ГҐГ¤Г­ГЁГ© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_30">
-        <text>левый мизинчик</text>
+        <text>Г«ГҐГўГ»Г© Г¬ГЁГ§ГЁГ­Г·ГЁГЄ</text>
     </string>
     <string id="carpg_bones_31">
-        <text>левый мизинчик</text>
+        <text>Г«ГҐГўГ»Г© Г¬ГЁГ§ГЁГ­Г·ГЁГЄ</text>
     </string>
     <string id="carpg_bones_32">
-        <text>левый мизинчик</text>
+        <text>Г«ГҐГўГ»Г© Г¬ГЁГ§ГЁГ­Г·ГЁГЄ</text>
     </string>
     <string id="carpg_bones_33">
-        <text>правую ключицу</text>
+        <text>ГЇГ°Г ГўГіГѕ ГЄГ«ГѕГ·ГЁГ¶Гі</text>
     </string>
     <string id="carpg_bones_34">
-        <text>правое плечо</text>
+        <text>ГЇГ°Г ГўГ®ГҐ ГЇГ«ГҐГ·Г®</text>
     </string>
     <string id="carpg_bones_35">
-        <text>правое предплечье</text>
+        <text>ГЇГ°Г ГўГ®ГҐ ГЇГ°ГҐГ¤ГЇГ«ГҐГ·ГјГҐ</text>
     </string>
     <string id="carpg_bones_36">
-        <text>правое запястье</text>
+        <text>ГЇГ°Г ГўГ®ГҐ Г§Г ГЇГїГ±ГІГјГҐ</text>
     </string>
     <string id="carpg_bones_37">
-        <text>правый большой палец</text>
+        <text>ГЇГ°Г ГўГ»Г© ГЎГ®Г«ГјГёГ®Г© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_38">
-        <text>правый большой палец</text>
+        <text>ГЇГ°Г ГўГ»Г© ГЎГ®Г«ГјГёГ®Г© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_39">
-        <text>правый большой палец</text>
+        <text>ГЇГ°Г ГўГ»Г© ГЎГ®Г«ГјГёГ®Г© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_40">
-        <text>правый средний палец</text>
+        <text>ГЇГ°Г ГўГ»Г© Г±Г°ГҐГ¤Г­ГЁГ© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_41">
-        <text>правый средний палец</text>
+        <text>ГЇГ°Г ГўГ»Г© Г±Г°ГҐГ¤Г­ГЁГ© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_42">
-        <text>правый средний палец</text>
+        <text>ГЇГ°Г ГўГ»Г© Г±Г°ГҐГ¤Г­ГЁГ© ГЇГ Г«ГҐГ¶</text>
     </string>
     <string id="carpg_bones_43">
-        <text>правый мизинчик</text>
+        <text>ГЇГ°Г ГўГ»Г© Г¬ГЁГ§ГЁГ­Г·ГЁГЄ</text>
     </string>
     <string id="carpg_bones_44">
-        <text>правый мизинчик</text>
+        <text>ГЇГ°Г ГўГ»Г© Г¬ГЁГ§ГЁГ­Г·ГЁГЄ</text>
     </string>
     <string id="carpg_bones_45">
-        <text>правый мизинчик</text>
+        <text>ГЇГ°Г ГўГ»Г© Г¬ГЁГ§ГЁГ­Г·ГЁГЄ</text>
     </string>
     <string id="carpg_bones_end">
-        <text>добивающий удар (4)</text>
+        <text>Г¤Г®ГЎГЁГўГ ГѕГ№ГЁГ© ГіГ¤Г Г° (4)</text>
     </string>
 
-    <!-- Лог вампиризма-->
+    <!-- Г‹Г®ГЈ ГўГ Г¬ГЇГЁГ°ГЁГ§Г¬Г -->
     <string id="rpg_vamp1">
-        <text>Поглощено</text>
+        <text>ГЏГ®ГЈГ«Г®Г№ГҐГ­Г®</text>
     </string>
     <string id="rpg_vamp2">
-        <text>единиц здоровья.</text>
+        <text>ГҐГ¤ГЁГ­ГЁГ¶ Г§Г¤Г®Г°Г®ГўГјГї.</text>
     </string>
     <string id="rpg_vamp3">
-        <text>Восстановлено</text>
+        <text>Г‚Г®Г±Г±ГІГ Г­Г®ГўГ«ГҐГ­Г®</text>
     </string>
     <string id="rpg_vamp4">
-        <text>% прочности</text>
+        <text>% ГЇГ°Г®Г·Г­Г®Г±ГІГЁ</text>
     </string>
     <string id="rpg_vamp5">
-        <text>(оружия)</text>
+        <text>(Г®Г°ГіГ¦ГЁГї)</text>
     </string>
     <string id="rpg_vamp6">
-        <text>(брони)</text>
+        <text>(ГЎГ°Г®Г­ГЁ)</text>
     </string>
     <string id="rpg_vamp7">
-        <text>(шлема)</text>
+        <text>(ГёГ«ГҐГ¬Г )</text>
     </string>
     <string id="rpg_vamp8">
-        <text>голова</text>
+        <text>ГЈГ®Г«Г®ГўГ </text>
     </string>
     <string id="rpg_vamp9">
-        <text>торс</text>
+        <text>ГІГ®Г°Г±</text>
     </string>
     <string id="rpg_vamp10">
-        <text>руки и ноги</text>
+        <text>Г°ГіГЄГЁ ГЁ Г­Г®ГЈГЁ</text>
     </string>
     <string id="rpg_vamp11">
-        <text>% общего самочувствия</text>
+        <text>% Г®ГЎГ№ГҐГЈГ® Г±Г Г¬Г®Г·ГіГўГ±ГІГўГЁГї</text>
     </string>
 
-    <!--Вывод инфы по бонусам-->
+    <!--Г‚Г»ГўГ®Г¤ ГЁГ­ГґГ» ГЇГ® ГЎГ®Г­ГіГ±Г Г¬-->
     <string id="rpg_stat_1">
-        <text>Призрачный выстрел</text>
+        <text>ГЏГ°ГЁГ§Г°Г Г·Г­Г»Г© ГўГ»Г±ГІГ°ГҐГ«</text>
     </string>
     <string id="rpg_stat_2">
-        <text>Тяжёлый выстрел</text>
+        <text>Г’ГїГ¦ВёГ«Г»Г© ГўГ»Г±ГІГ°ГҐГ«</text>
     </string>
     <string id="rpg_stat_21">
-        <text>урона нежити</text>
+        <text>ГіГ°Г®Г­Г  Г­ГҐГ¦ГЁГІГЁ</text>
     </string>
     <string id="rpg_stat_3">
-        <text>Взрывной выстрел</text>
+        <text>Г‚Г§Г°Г»ГўГ­Г®Г© ГўГ»Г±ГІГ°ГҐГ«</text>
     </string>
     <string id="rpg_stat_4">
-        <text>Калечащий выстрел</text>
+        <text>ГЉГ Г«ГҐГ·Г Г№ГЁГ© ГўГ»Г±ГІГ°ГҐГ«</text>
     </string>
     <string id="rpg_stat_5">
-        <text>Ломающий выстрел</text>
+        <text>Г‹Г®Г¬Г ГѕГ№ГЁГ© ГўГ»Г±ГІГ°ГҐГ«</text>
     </string>
     <string id="rpg_stat_6">
-        <text>Престиж: бронебойный выстрел </text>
+        <text>ГЏГ°ГҐГ±ГІГЁГ¦: ГЎГ°Г®Г­ГҐГЎГ®Г©Г­Г»Г© ГўГ»Г±ГІГ°ГҐГ« </text>
     </string>
     <string id="rpg_stat_62">
-        <text>(20% дополнительного урона по броне)</text>
+        <text>(20% Г¤Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г®ГЈГ® ГіГ°Г®Г­Г  ГЇГ® ГЎГ°Г®Г­ГҐ)</text>
     </string>
     <string id="rpg_stat_7">
-        <text>Престиж: разоружающий выстрел </text>
+        <text>ГЏГ°ГҐГ±ГІГЁГ¦: Г°Г Г§Г®Г°ГіГ¦Г ГѕГ№ГЁГ© ГўГ»Г±ГІГ°ГҐГ« </text>
     </string>
     <string id="rpg_stat_72">
-        <text>(выстрелом в правую руку можно выбить оружие)</text>
+        <text>(ГўГ»Г±ГІГ°ГҐГ«Г®Г¬ Гў ГЇГ°Г ГўГіГѕ Г°ГіГЄГі Г¬Г®Г¦Г­Г® ГўГ»ГЎГЁГІГј Г®Г°ГіГ¦ГЁГҐ)</text>
     </string>
 
-    <!-- Уведомления в чате-->
+    <!-- Г“ГўГҐГ¤Г®Г¬Г«ГҐГ­ГЁГї Гў Г·Г ГІГҐ-->
     <string id="rpg_lvl">
-        <text>Уровень</text>
+        <text>Г“Г°Г®ГўГҐГ­Гј</text>
     </string>
 	<string id="rpg_lvlUpNew">
-        <text>Получен новый уровень!</text>
+        <text>ГЏГ®Г«ГіГ·ГҐГ­ Г­Г®ГўГ»Г© ГіГ°Г®ГўГҐГ­Гј!</text>
     </string>			 
     <string id="rpg_1">
-        <text>Получено</text>
+        <text>ГЏГ®Г«ГіГ·ГҐГ­Г®</text>
     </string>
     <string id="rpg_2">
-        <text>единиц опыта</text>
+        <text>ГҐГ¤ГЁГ­ГЁГ¶ Г®ГЇГ»ГІГ </text>
     </string>
     <string id="rpg_lvlup">
-        <text>Поздравляем! Получен новый уровень! Нажмите SHIFT+C для распределения очков</text>
+        <text>ГЏГ®Г§Г¤Г°Г ГўГ«ГїГҐГ¬! ГЏГ®Г«ГіГ·ГҐГ­ Г­Г®ГўГ»Г© ГіГ°Г®ГўГҐГ­Гј! ГЌГ Г¦Г¬ГЁГІГҐ SHIFT+C Г¤Г«Гї Г°Г Г±ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГї Г®Г·ГЄГ®Гў</text>
     </string>
 
-    <!-- Обработка урона-->
+    <!-- ГЋГЎГ°Г ГЎГ®ГІГЄГ  ГіГ°Г®Г­Г -->
     <string id="rpg_dmg_0">
-        <text>ожог</text>
+        <text>Г®Г¦Г®ГЈ</text>
     </string>
     <string id="rpg_dmg_1">
-        <text>электричество</text>
+        <text>ГЅГ«ГҐГЄГІГ°ГЁГ·ГҐГ±ГІГўГ®</text>
     </string>
     <string id="rpg_dmg_2">
-        <text>хим.ожог</text>
+        <text>ГµГЁГ¬.Г®Г¦Г®ГЈ</text>
     </string>
     <string id="rpg_dmg_3">
-        <text>радиация</text>
+        <text>Г°Г Г¤ГЁГ Г¶ГЁГї</text>
     </string>
     <string id="rpg_dmg_4">
-        <text>ментальный удар</text>
+        <text>Г¬ГҐГ­ГІГ Г«ГјГ­Г»Г© ГіГ¤Г Г°</text>
     </string>
     <string id="rpg_dmg_5">
-        <text>разрыв</text>
+        <text>Г°Г Г§Г°Г»Гў</text>
     </string>
     <string id="rpg_dmg_6">
-        <text>пулевое ранение</text>
+        <text>ГЇГіГ«ГҐГўГ®ГҐ Г°Г Г­ГҐГ­ГЁГҐ</text>
     </string>
     <string id="rpg_dmg_7">
-        <text>взрыв</text>
+        <text>ГўГ§Г°Г»Гў</text>
     </string>
     <string id="rpg_dmg_8">
-        <text>неизвестный источник1</text>
+        <text>Г­ГҐГЁГ§ГўГҐГ±ГІГ­Г»Г© ГЁГ±ГІГ®Г·Г­ГЁГЄ1</text>
     </string>
     <string id="rpg_dmg_9">
-        <text>неизвестный источник2</text>
+        <text>Г­ГҐГЁГ§ГўГҐГ±ГІГ­Г»Г© ГЁГ±ГІГ®Г·Г­ГЁГЄ2</text>
     </string>
     <string id="rpg_dmg_10">
-        <text>раскалённый воздух</text>
+        <text>Г°Г Г±ГЄГ Г«ВёГ­Г­Г»Г© ГўГ®Г§Г¤ГіГµ</text>
     </string>
     <string id="rpg_dmg_11">
-        <text>неизвестный источник4</text>
+        <text>Г­ГҐГЁГ§ГўГҐГ±ГІГ­Г»Г© ГЁГ±ГІГ®Г·Г­ГЁГЄ4</text>
     </string>
     <string id="rpg_dmg_12">
-        <text>ожог </text>
+        <text>Г®Г¦Г®ГЈ </text>
     </string>
 
-    <!--отхил и стабилизация-->
+    <!--Г®ГІГµГЁГ« ГЁ Г±ГІГ ГЎГЁГ«ГЁГ§Г Г¶ГЁГї-->
     <string id="rpg_heal1">
-        <text>Выведено</text>
+        <text>Г‚Г»ГўГҐГ¤ГҐГ­Г®</text>
     </string>
 
     <string id="rpg_heal2">
-        <text>радиации</text>
+        <text>Г°Г Г¤ГЁГ Г¶ГЁГЁ</text>
     </string>
 
     <string id="rpg_heal3">
-        <text>мл. крови</text>
+        <text>Г¬Г«. ГЄГ°Г®ГўГЁ</text>
     </string>
 
-    <!--Лог защиты-->
+    <!--Г‹Г®ГЈ Г§Г Г№ГЁГІГ»-->
     <string id="rpg_def">
-        <text>Защита:</text>
+        <text>Г‡Г Г№ГЁГІГ :</text>
     </string>
     <string id="rpg_def0">
-        <text>показатель защиты</text>
+        <text>ГЇГ®ГЄГ Г§Г ГІГҐГ«Гј Г§Г Г№ГЁГІГ»</text>
     </string>
     <string id="rpg_def1">
-        <text>отражено</text>
+        <text>Г®ГІГ°Г Г¦ГҐГ­Г®</text>
     </string>
     <string id="rpg_def3">
-        <text>успешный уворот!</text>
+        <text>ГіГ±ГЇГҐГёГ­Г»Г© ГіГўГ®Г°Г®ГІ!</text>
     </string>
 
     <string id="pda_arpg">
-        <text>Опыт: </text>
+        <text>ГЋГЇГ»ГІ: </text>
     </string>
     <string id="arpg_isjammed_healing">
-        <text>Оружие заклинило. Чиним</text>
+        <text>ГЋГ°ГіГ¦ГЁГҐ Г§Г ГЄГ«ГЁГ­ГЁГ«Г®. Г—ГЁГ­ГЁГ¬</text>
     </string>
     <string id="arpg_ghost">
-        <text>Призрачный боеприпас: восстановлено</text>
+        <text>ГЏГ°ГЁГ§Г°Г Г·Г­Г»Г© ГЎГ®ГҐГЇГ°ГЁГЇГ Г±: ГўГ®Г±Г±ГІГ Г­Г®ГўГ«ГҐГ­Г®</text>
     </string>
     
     <string id="ui_arpg_reset">
-        <text>Сбросить прогресс? Все очки будут восстановлены</text>
+        <text>Г‘ГЎГ°Г®Г±ГЁГІГј ГЇГ°Г®ГЈГ°ГҐГ±Г±? Г‚Г±ГҐ Г®Г·ГЄГЁ ГЎГіГ¤ГіГІ ГўГ®Г±Г±ГІГ Г­Г®ГўГ«ГҐГ­Г»</text>
     </string>
     <string id="ui_arpg_reset2">
-        <text>Сбросить прогресс</text>
+        <text>Г‘ГЎГ°Г®Г±ГЁГІГј ГЇГ°Г®ГЈГ°ГҐГ±Г±</text>
     </string>
 
     <string id="arpg_disabled">
-        <text>Цель обездвижена!</text>
+        <text>Г–ГҐГ«Гј Г®ГЎГҐГ§Г¤ГўГЁГ¦ГҐГ­Г !</text>
     </string>
 
     <string id="arpg_jammed">
-        <text>Вражеское оружие повреждено!</text>
+        <text>Г‚Г°Г Г¦ГҐГ±ГЄГ®ГҐ Г®Г°ГіГ¦ГЁГҐ ГЇГ®ГўГ°ГҐГ¦Г¤ГҐГ­Г®!</text>
     </string>
 
     <string id="arpg_disarmed">
-        <text>Цель обезоружена!</text>
+        <text>Г–ГҐГ«Гј Г®ГЎГҐГ§Г®Г°ГіГ¦ГҐГ­Г !</text>
     </string>
     <string id="arpg_headshot">
-        <text>рублей за гнилуют тыкву!</text>
+        <text>Г°ГіГЎГ«ГҐГ© Г§Г  ГЈГ­ГЁГ«ГіГѕГІ ГІГ»ГЄГўГі!</text>
     </string>
 </string_table>
