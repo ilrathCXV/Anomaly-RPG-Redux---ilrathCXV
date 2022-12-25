@@ -1951,7 +1951,11 @@ function on_get_item_cost(kind, obj, profile, calculated_cost, ret)
 	if profile.mode == 1 then -- when selling
 		ret.new_cost = math.floor((ret.new_cost or calculated_cost) * (1 + skill_price_modifier + community_bonus))
 	elseif profile.mode == 2 then -- when buying
-		ret.new_cost = math.ceil((ret.new_cost or calculated_cost) * (1 - skill_price_modifier - community_bonus))
+		local buying_cost_modifier = 1 - skill_price_modifier - community_bonus
+		if buying_cost < 0.05 then 
+			buying_cost = 0.05
+		end
+		ret.new_cost = math.ceil((ret.new_cost or calculated_cost) * (buying_cost_modifier))
 	end
 	item_costs[obj:id()] = ret.new_cost or calculated_cost
 end
