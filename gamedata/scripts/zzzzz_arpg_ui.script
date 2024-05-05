@@ -642,12 +642,12 @@ function loot_improvement(item)	--actor_on_item_take(item)
 	
 ------[NEW] Arte-finder functionality (increases to GAMMA's min and max thresholds)
 	
-	-- if arpg_m.mrdr >= skill_req(3) and grok_artefacts_random_condition and grok_artefacts_random_condition.grok_arti_random_efficiency then
+	-- if arpg_m.mrdr >= skill_req(3)  then
 	if arpg_m.mrdr >= skill_req(3) then
 		local typeOfArtefact = SYS_GetParam(0, item:section(), "kind")
 		if IsArtefact(item) or (typeOfArtefact == "i_arty_cont") then
-			local minCondition = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3))
-			local maxCondition = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))
+			local minCondition = 20 + 1 + (arpg_m.mrdr - skill_req(3))
+			local maxCondition = 30 + 1 + (arpg_m.mrdr - skill_req(3))
 			if item:condition() < (minCondition * 0.01) then
 				local condArty  = (math.random(minCondition, maxCondition) * 0.01)
 				item:set_condition(condArty)
@@ -1151,8 +1151,8 @@ function death_manager.create_release_item(victim)
 			if arpg_m.mrdr >= skill_req(7) then		------------------------------------------> When final Looter skill is unlocked, an additional roll for an artefact is unlocked (flat 5% chance)
 				artyDrop = math.random(100) <= 1
 				if artyDrop then
-					local minCondition = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3))
-					local maxCondition = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))
+					local minCondition = 20 + 1 + (arpg_m.mrdr - skill_req(3))
+					local maxCondition = 30 + 1 + (arpg_m.mrdr - skill_req(3))
 					local conditionArty = math.random(minCondition, maxCondition)
 					alife_create_item(allowed_artefacts[math.random(#allowed_artefacts)], victim, {cond = conditionArty * 0.01})
 				end
@@ -1611,7 +1611,7 @@ function PerkSelector:InitControls()
     self.skills["mrdr_bonus4"].icon = xml:InitStatic("arpg_selector:mrdr_bonus4", self)
     self.skills["mrdr_bonus4"].description =  parse_keys( gt("ui_arpg_hint_weapon_loot"), {["stat"] = 10 + ( class * 0.5) })
     self.skills["mrdr_bonus3"].icon = xml:InitStatic("arpg_selector:mrdr_bonus3", self)
-    self.skills["mrdr_bonus3"].description =  parse_keys( gt("ui_arpg_hint_artefinder"), {["stat"] = 1 + (0.5 * (arpg_m.mrdr - skill_req(3))), ["number"] = grok_artefacts_random_condition.arti_min_eff + 1 + (arpg_m.mrdr - skill_req(3)), ["boost"] = grok_artefacts_random_condition.arti_max_eff + 1 + (arpg_m.mrdr - skill_req(3))})
+    self.skills["mrdr_bonus3"].description =  parse_keys( gt("ui_arpg_hint_artefinder"), {["stat"] = 1 + (0.5 * (arpg_m.mrdr - skill_req(3))), ["number"] = 20 + 1 + (arpg_m.mrdr - skill_req(3)), ["boost"] = 30 + 1 + (arpg_m.mrdr - skill_req(3))})
     self.skills["mrdr_bonus2"].icon = xml:InitStatic("arpg_selector:mrdr_bonus2", self)
     self.skills["mrdr_bonus2"].description = parse_keys( gt("ui_arpg_hint_medicine_man"), {["stat"] = 1 + (arpg_m.mrdr - skill_req(2))})
     self.skills["mrdr_bonus1"].icon = xml:InitStatic("arpg_selector:mrdr_bonus1", self)
@@ -1951,11 +1951,7 @@ function on_get_item_cost(kind, obj, profile, calculated_cost, ret)
 	if profile.mode == 1 then -- when selling
 		ret.new_cost = math.floor((ret.new_cost or calculated_cost) * (1 + skill_price_modifier + community_bonus))
 	elseif profile.mode == 2 then -- when buying
-		local buying_cost_modifier = 1 - skill_price_modifier - community_bonus
-		if buying_cost_modifier < 0.05 then 
-			buying_cost_modifier = 0.05
-		end
-		ret.new_cost = math.ceil((ret.new_cost or calculated_cost) * (buying_cost_modifier))
+		ret.new_cost = math.ceil((ret.new_cost or calculated_cost) * (1 - skill_price_modifier - community_bonus))
 	end
 	item_costs[obj:id()] = ret.new_cost or calculated_cost
 end
